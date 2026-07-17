@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>八字命盤｜完整解析</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+:root{
+  --ink:#12100a;--bg:#f0ebe0;--gold:#b8923a;--gold-lt:#e8d5a0;--gold-pale:#faf6eb;
+  --jade:#2a5e50;--jade-lt:#e4f0ec;--rust:#7d3520;--mist:#6b7280;--border:#d6c99a;--card:#fffdf6;
+  --red:#8b2020;--blue:#1a3a5e;--green:#1a5e2a;--yellow:#5e4a10;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+header{background:var(--ink);padding:18px 20px;display:flex;align-items:center;gap:12px;}
+.logo{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;width:36px;height:36px;padding:4px;border:1.5px solid var(--gold);}
+.logo span{background:var(--gold);opacity:.5;}
+.logo span:nth-child(5){opacity:1;}
+header h1{font-family:'Noto Serif TC',serif;color:var(--gold);font-size:1.05rem;letter-spacing:.1em;}
+header p{color:rgba(255,255,255,.4);font-size:.68rem;margin-top:2px;}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 80px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--jade));}
+.card-title{font-family:'Noto Serif TC',serif;font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:14px;letter-spacing:.06em;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+.field label{display:block;font-size:.72rem;color:var(--mist);margin-bottom:4px;}
+.field select,.field input{width:100%;border:1px solid var(--border);background:var(--bg);padding:9px 10px;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;color:var(--ink);border-radius:4px;outline:none;}
+.field select:focus,.field input:focus{border-color:var(--gold);}
+.btn{width:100%;padding:13px;background:var(--ink);color:var(--gold);border:none;border-radius:4px;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.1em;cursor:pointer;margin-top:10px;}
+.btn:hover{background:#2d2010;}
+
+/* 四柱 */
+.pillar-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.pillar{background:var(--card);border:1.5px solid var(--border);border-radius:6px;padding:12px 8px;text-align:center;}
+.pillar .p-label{font-size:.7rem;color:var(--mist);margin-bottom:6px;letter-spacing:.06em;}
+.pillar .p-gan{font-family:'Noto Serif TC',serif;font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.pillar .p-zhi{font-family:'Noto Serif TC',serif;font-size:1.8rem;font-weight:900;line-height:1;}
+.pillar .p-sub{font-size:.68rem;color:var(--mist);margin-top:6px;line-height:1.6;}
+.gan-wood{color:#2d6b30;}
+.gan-fire{color:#8b2020;}
+.gan-earth{color:#7a5a10;}
+.gan-metal{color:#4a4a6a;}
+.gan-water{color:#1a3a6e;}
+
+/* 五行圖 */
+.wx-bars{display:flex;gap:8px;align-items:flex-end;height:120px;margin:12px 0;}
+.wx-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.wx-bar{width:100%;border-radius:3px 3px 0 0;transition:height .3s;}
+.wx-bar-label{font-size:.72rem;color:var(--mist);}
+.wx-bar-val{font-size:.78rem;font-weight:700;}
+
+/* 十神 */
+.shen-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0;}
+.shen-item{background:var(--gold-pale);border:1px solid var(--gold-lt);border-radius:4px;padding:8px 4px;text-align:center;}
+.shen-item .sn{font-family:'Noto Serif TC',serif;font-size:.9rem;font-weight:700;color:var(--gold);}
+.shen-item .sl{font-size:.65rem;color:var(--mist);margin-top:2px;}
+
+/* 大運 */
+.dayun-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin:10px 0;}
+.dayun-item{flex-shrink:0;width:70px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:8px 4px;text-align:center;}
+.dayun-item.current{border-color:var(--gold);background:var(--gold-pale);}
+.dayun-item .dy-age{font-size:.65rem;color:var(--mist);margin-bottom:4px;}
+.dayun-item .dy-gan{font-family:'Noto Serif TC',serif;font-size:1.1rem;font-weight:700;}
+.dayun-item .dy-zhi{font-family:'Noto Serif TC',serif;font-size:1.1rem;font-weight:700;}
+.dayun-item .dy-shen{font-size:.62rem;color:var(--gold);margin-top:3px;}
+
+/* 頁面導航 */
+.page-nav{display:flex;overflow-x:auto;gap:0;margin-bottom:16px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px;}
+.pnav-btn{flex-shrink:0;padding:7px 12px;border:none;background:transparent;border-radius:4px;font-size:.75rem;cursor:pointer;color:var(--mist);font-family:'Noto Sans TC',sans-serif;white-space:nowrap;}
+.pnav-btn.on{background:var(--ink);color:var(--gold);font-weight:700;}
+.page{display:none;}.page.on{display:block;}
+
+/* 解析區塊 */
+.sec{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:18px;margin-bottom:12px;}
+.sec-head{font-family:'Noto Serif TC',serif;font-size:.9rem;font-weight:700;color:var(--jade);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec-icon{width:22px;height:22px;background:var(--jade);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;}
+.sec-body{font-size:.86rem;line-height:1.95;color:#2a200e;}
+.sec-body p{margin-bottom:8px;}
+.hl{font-weight:700;color:var(--jade);}
+.warn{color:var(--rust);font-weight:700;}
+.gold{color:var(--gold);font-weight:700;}
+.tip{background:var(--gold-pale);border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 4px 4px 0;margin-top:10px;font-size:.84rem;line-height:1.8;}
+
+/* 匯出 */
+.export-bar{background:var(--ink);border-radius:6px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.export-bar p{color:rgba(255,255,255,.6);font-size:.82rem;}
+.ebtn{background:var(--gold);color:var(--ink);border:none;padding:9px 16px;border-radius:4px;font-size:.8rem;font-weight:700;cursor:pointer;}
+
+@media(max-width:480px){
+  .row2,.row3,.row4{grid-template-columns:1fr 1fr;}
+  .pillar .p-gan,.pillar .p-zhi{font-size:1.5rem;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <div><h1>八字命盤系統</h1><p>四柱 ✦ 五行 ✦ 十神 ✦ 大運 ✦ 流年</p></div>
+</header>
+<div class="wrap">
+
+<div class="card" id="input-card">
+  <div class="card-title">輸入命主資料</div>
+  <div class="row2">
+    <div class="field"><label>姓名</label><input type="text" id="f-name" placeholder="輸入姓名"></div>
+    <div class="field"><label>性別</label>
+      <select id="f-gender"><option value="female">女命</option><option value="male">男命</option></select>
+    </div>
+  </div>
+  <div class="row4">
+    <div class="field"><label>出生年</label>
+      <select id="f-year"><option value="">請選擇</option></select>
+    </div>
+    <div class="field"><label>出生月</label>
+      <select id="f-month"><option value="">請選擇</option>
+        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+        <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
+        <option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+      </select>
+    </div>
+    <div class="field"><label>出生日</label>
+      <select id="f-day"><option value="">請選擇</option></select>
+    </div>
+    <div class="field"><label>出生時辰</label>
+      <select id="f-hour">
+        <option value="-1">不知道</option>
+        <option value="0">子時 23-01</option><option value="1">丑時 01-03</option>
+        <option value="2">寅時 03-05</option><option value="3">卯時 05-07</option>
+        <option value="4">辰時 07-09</option><option value="5">巳時 09-11</option>
+        <option value="6">午時 11-13</option><option value="7">未時 13-15</option>
+        <option value="8">申時 15-17</option><option value="9">酉時 17-19</option>
+        <option value="10">戌時 19-21</option><option value="11">亥時 21-23</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="field"><label>感情狀態</label>
+      <select id="f-status"><option value="單身">單身</option><option value="交往中">交往中</option><option value="已婚">已婚</option><option value="離婚/分手後">離婚/分手後</option></select>
+    </div>
+    <div class="field"><label>解析年度</label>
+      <select id="f-anal-year"></select>
+    </div>
+  </div>
+  <button class="btn" onclick="runBazi()">✦ 起八字命盤</button>
+</div>
+
+<div id="result" style="display:none">
+  <div class="export-bar">
+    <p id="r-title">八字命盤報告</p>
+    <div style="display:flex;gap:8px">
+      <button class="ebtn" onclick="copyCurrentPage()">📋 複製本頁</button>
+      <button class="ebtn" onclick="copyAll()">📋 複製全部</button>
+      <button class="ebtn" onclick="window.print()">🖨 列印</button>
+    </div>
+  </div>
+  <div class="page-nav" id="page-nav"></div>
+  <div id="pages-container"></div>
+</div>
+
+<div id="copy-buf" style="display:none;white-space:pre-wrap"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// 萬年曆資料庫（節氣換月基準）
+// 每年12個月的節氣日期（該月節氣入節日）
+// ══════════════════════════════════════════════════════════
+// 格式：JIEQI[year] = [月柱換月日期array，1月到12月]
+// 數字代表該月「節」的日期（過了這天才算進入該月柱）
+var JIEQI = {
+  1940:[6,5,6,5,6,6,7,8,8,8,8,7],1941:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1942:[6,4,6,5,6,6,7,8,8,8,7,7],1943:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1944:[6,5,6,5,6,6,7,8,8,8,7,7],1945:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1946:[6,4,6,5,6,6,7,8,8,8,7,7],1947:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1948:[6,5,6,5,6,6,7,8,8,8,7,7],1949:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1950:[6,4,6,5,6,6,7,8,8,8,7,7],1951:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1952:[6,5,6,5,6,6,7,8,8,8,7,7],1953:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1954:[6,4,6,5,6,6,7,8,8,8,7,7],1955:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1956:[6,5,6,5,6,6,7,8,8,8,7,7],1957:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1958:[6,4,6,5,6,6,7,8,8,8,7,7],1959:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1960:[6,5,6,5,6,6,7,8,8,8,7,7],1961:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1962:[6,4,6,5,6,6,7,8,8,8,7,7],1963:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1964:[6,5,6,5,6,6,7,8,8,8,7,7],1965:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1966:[6,4,6,5,6,6,7,8,8,8,7,7],1967:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1968:[6,5,6,5,6,6,7,8,8,8,7,7],1969:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1970:[6,4,6,5,6,6,7,8,8,8,7,7],1971:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1972:[6,5,6,5,6,6,7,8,8,8,7,7],1973:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1974:[6,4,6,5,6,6,7,8,8,8,7,7],1975:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1976:[6,5,6,5,6,6,7,8,8,8,7,7],1977:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1978:[6,4,6,5,6,6,7,8,8,8,7,7],1979:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1980:[6,5,6,5,6,6,7,8,8,8,7,7],1981:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1982:[6,4,6,5,6,6,7,8,8,8,7,7],1983:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1984:[6,5,6,5,6,6,7,8,8,8,7,7],1985:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1986:[6,4,6,5,6,6,7,8,8,8,7,7],1987:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1988:[6,5,6,5,6,6,7,8,8,8,7,7],1989:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1990:[6,4,6,5,6,6,7,8,8,8,7,7],1991:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1992:[6,5,6,5,6,6,7,8,8,8,7,7],1993:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1994:[6,4,6,5,6,6,7,8,8,8,7,7],1995:[6,5,6,6,6,6,8,8,8,8,8,7],
+  1996:[6,5,6,5,6,6,7,8,8,8,7,7],1997:[6,4,6,5,6,6,7,8,8,8,7,7],
+  1998:[6,4,6,5,6,6,7,8,8,8,7,7],1999:[6,5,6,6,6,6,8,8,8,8,8,7],
+  2000:[6,5,6,5,6,6,7,8,8,8,7,7],2001:[6,4,6,5,6,6,7,8,8,8,7,7],
+  2002:[6,4,6,5,6,6,7,8,8,8,7,7],2003:[6,5,6,6,6,6,8,8,8,8,8,7],
+  2004:[6,5,6,5,6,6,7,8,8,8,7,7],2005:[6,4,6,5,6,6,7,8,8,8,7,7],
+  2006:[6,4,6,5,6,6,7,8,8,8,7,7],2007:[6,5,6,6,6,6,8,8,8,8,8,7],
+  2008:[6,5,6,5,6,6,7,8,8,8,7,7],2009:[6,4,6,5,6,6,7,8,8,8,7,7],
+  2010:[6,4,6,5,6,6,7,8,8,8,7,7]
+};
+
+// 日柱基準：以 1900/1/1 為甲子日(index=0)計算
+// 日干支循環60
+var DAY_BASE = new Date(1900,0,1);
+
+// ══════════════════════════════════════════════════════════
+// 天干地支常數
+// ══════════════════════════════════════════════════════════
+var GAN  = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+var ZHI  = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+var ANIMAL = ['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+// 天干五行
+var GAN_WX  = ['木','木','火','火','土','土','金','金','水','水'];
+// 天干陰陽
+var GAN_YY  = ['陽','陰','陽','陰','陽','陰','陽','陰','陽','陰'];
+// 地支五行
+var ZHI_WX  = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+// 地支藏干（主氣）
+var ZHI_CANG = [
+  ['壬','癸'],['己','癸','辛'],['甲','丙','戊'],['甲','乙'],
+  ['戊','乙','癸'],['丙','庚','戊'],['丙','丁','己'],['己','乙','丁'],
+  ['庚','壬','戊'],['庚','辛'],['戊','辛','丁'],['壬','甲']
+];
+// 五行顏色 class
+var WX_COLOR = {木:'gan-wood',火:'gan-fire',土:'gan-earth',金:'gan-metal',水:'gan-water'};
+// 五行代表色（圖表用）
+var WX_CHART_COLOR = {木:'#2d6b30',火:'#c0392b',土:'#c9a84c',金:'#7f8c8d',水:'#2980b9'};
+
+// ══════════════════════════════════════════════════════════
+// 四柱排盤
+// ══════════════════════════════════════════════════════════
+function getYearPillar(y, m, d) {
+  // 立春前算上一年
+  var jieqiM1 = JIEQI[y] ? JIEQI[y][0] : 6;
+  var isBeforeLichun = (m === 1) || (m === 2 && d < jieqiM1);
+  var baziYear = isBeforeLichun ? y - 1 : y;
+  var ganIdx = (baziYear - 4) % 10;
+  if(ganIdx < 0) ganIdx += 10;
+  var zhiIdx = (baziYear - 4) % 12;
+  if(zhiIdx < 0) zhiIdx += 12;
+  return {gan: GAN[ganIdx], zhi: ZHI[zhiIdx], ganIdx: ganIdx, zhiIdx: zhiIdx, year: baziYear};
+}
+
+function getMonthPillar(y, m, d) {
+  // 根據節氣判斷月柱
+  var jq = JIEQI[y] || JIEQI[2000];
+  var baziMonth;
+  if(d >= jq[m-1]) {
+    baziMonth = m; // 已過節，用本月
+  } else {
+    baziMonth = m - 1; // 未過節，用上月
+    if(baziMonth === 0) baziMonth = 12;
+  }
+  // 月干：根據年干推月干（五虎遁年起月法）
+  var yp = getYearPillar(y, m, d);
+  var yGanIdx = yp.ganIdx;
+  // 寅月(3)為正月，月支從寅開始
+  // 月支index：寅=2，所以月支 = (baziMonth + 1) % 12
+  var mZhiIdx = (baziMonth + 1) % 12;
+  // 年干與月干關係（五虎遁）
+  // 甲己年：寅月起丙寅
+  var mGanStart = {0:2, 1:4, 2:6, 3:8, 4:0, 5:2, 6:4, 7:6, 8:8, 9:0}[yGanIdx % 5 === 0 ? 0 : yGanIdx % 5 === 1 ? 1 : yGanIdx % 5 === 2 ? 2 : yGanIdx % 5 === 3 ? 3 : 4];
+  // 更精確：甲己→丙，乙庚→戊，丙辛→庚，丁壬→壬，戊癸→甲
+  var startGan = [2,4,6,8,0][(yGanIdx%5)];
+  // 從寅月開始算，寅=index 2
+  // baziMonth=1→寅月(index2)，baziMonth=2→卯月...
+  var monthOffset = baziMonth - 1; // 0-based，0=寅
+  var mGanIdx = (startGan + monthOffset) % 10;
+  return {gan: GAN[mGanIdx], zhi: ZHI[mZhiIdx], ganIdx: mGanIdx, zhiIdx: mZhiIdx, month: baziMonth};
+}
+
+function getDayPillar(y, m, d) {
+  var date = new Date(y, m-1, d);
+  var diff = Math.round((date - DAY_BASE) / 86400000);
+  var ganIdx = ((diff % 10) + 10) % 10;
+  var zhiIdx = ((diff % 12) + 12) % 12;
+  return {gan: GAN[ganIdx], zhi: ZHI[zhiIdx], ganIdx: ganIdx, zhiIdx: zhiIdx};
+}
+
+function getHourPillar(hourIdx, dayGanIdx) {
+  if(hourIdx < 0) return null;
+  // 日上起時法
+  var startGan = [0,2,4,6,8][(dayGanIdx%5)];
+  var hGanIdx = (startGan + hourIdx) % 10;
+  return {gan: GAN[hGanIdx], zhi: ZHI[hourIdx], ganIdx: hGanIdx, zhiIdx: hourIdx};
+}
+
+// ══════════════════════════════════════════════════════════
+// 五行計算
+// ══════════════════════════════════════════════════════════
+function calcWuxing(pillars) {
+  var wx = {木:0, 火:0, 土:0, 金:0, 水:0};
+  pillars.forEach(function(p) {
+    if(!p) return;
+    wx[GAN_WX[p.ganIdx]] += 2; // 天干計2分
+    wx[ZHI_WX[p.zhiIdx]] += 1; // 地支主氣計1分
+    // 藏干
+    ZHI_CANG[p.zhiIdx].forEach(function(g, i) {
+      var idx = GAN.indexOf(g);
+      if(idx >= 0) wx[GAN_WX[idx]] += (i===0 ? 1.5 : 0.5);
+    });
+  });
+  return wx;
+}
+
+// ══════════════════════════════════════════════════════════
+// 十神
+// ══════════════════════════════════════════════════════════
+var SHISHEN_TABLE = [
+  // 日主為 甲乙丙丁戊己庚辛壬癸，其他干對應十神
+  // index: [日主ganIdx][目標ganIdx] = 十神
+];
+function getTenGod(dayGanIdx, targetGanIdx) {
+  var dayWx = GAN_WX[dayGanIdx];
+  var dayYY = GAN_YY[dayGanIdx];
+  var tgtWx = GAN_WX[targetGanIdx];
+  var tgtYY = GAN_YY[targetGanIdx];
+  // 五行相生相剋關係
+  var sheng = {木:'火',火:'土',土:'金',金:'水',水:'木'};
+  var ke = {木:'土',火:'金',土:'水',金:'木',水:'火'};
+  var beSheng = {火:'木',土:'火',金:'土',水:'金',木:'水'};
+  var beKe = {土:'木',金:'火',水:'土',木:'金',火:'水'};
+
+  if(tgtWx === dayWx) {
+    return tgtYY === dayYY ? '比肩' : '劫財';
+  } else if(sheng[dayWx] === tgtWx) {
+    return tgtYY === dayYY ? '食神' : '傷官';
+  } else if(ke[dayWx] === tgtWx) {
+    return tgtYY === dayYY ? '偏財' : '正財';
+  } else if(beKe[dayWx] === tgtWx) {
+    return tgtYY === dayYY ? '偏官(七殺)' : '正官';
+  } else if(beSheng[dayWx] === tgtWx) {
+    return tgtYY === dayYY ? '偏印' : '正印';
+  }
+  return '—';
+}
+
+// ══════════════════════════════════════════════════════════
+// 大運計算
+// ══════════════════════════════════════════════════════════
+function getDayun(gender, yearGanIdx, birthY, birthM, birthD, analYear) {
+  // 陽年男命/陰年女命 → 順行；否則逆行
+  var yangYear = (yearGanIdx % 2 === 0);
+  var isMale = (gender === 'male');
+  var shunxing = (yangYear && isMale) || (!yangYear && !isMale);
+
+  var jq = JIEQI[birthY] || JIEQI[2000];
+  var birthDate = new Date(birthY, birthM-1, birthD);
+  var daysToJieqi;
+
+  if(shunxing) {
+    // 順行：找出生後的下一個節氣
+    var nm = birthM, nYear = birthY;
+    var nd = jq[nm-1];
+    if(birthD >= nd) {
+      nm++;
+      if(nm > 12) { nm = 1; nYear = birthY + 1; }
+    }
+    var nJq = JIEQI[nYear] || jq;
+    nd = nJq[nm-1];
+    var nextJieqiDate = new Date(nYear, nm-1, nd);
+    daysToJieqi = Math.round((nextJieqiDate - birthDate) / 86400000);
+  } else {
+    // 逆行：找出生前的上一個節氣
+    var pm = birthM, pYear = birthY;
+    var pd = jq[pm-1];
+    if(birthD < pd) {
+      pm--;
+      if(pm < 1) { pm = 12; pYear = birthY - 1; }
+    }
+    var pJq = JIEQI[pYear] || jq;
+    pd = pJq[pm-1];
+    var prevJieqiDate = new Date(pYear, pm-1, pd);
+    daysToJieqi = Math.round((birthDate - prevJieqiDate) / 86400000);
+  }
+
+  // 防呆：天數差異常時強制歸零
+  if(!(daysToJieqi >= 0 && daysToJieqi < 40)) daysToJieqi = Math.abs(daysToJieqi) % 30;
+
+  // 3天=1年大運
+  var startAge = Math.max(0, Math.min(10, Math.round(daysToJieqi / 3)));
+  var startYear = birthY + startAge;
+
+  // 起大運干支：從月柱開始順/逆推
+  var mp = getMonthPillar(birthY, birthM, birthD);
+  var dayuns = [];
+  for(var i=0; i<8; i++) {
+    var offset = shunxing ? (i+1) : -(i+1);
+    var gIdx = ((mp.ganIdx + offset) % 10 + 10) % 10;
+    var zIdx = ((mp.zhiIdx + offset) % 12 + 12) % 12;
+    var age = startAge + i*10;
+    var yr = startYear + i*10;
+    var isCurrent = (analYear >= yr && analYear < yr+10);
+    dayuns.push({
+      gan: GAN[gIdx], zhi: ZHI[zIdx],
+      ganIdx: gIdx, zhiIdx: zIdx,
+      age: age, year: yr, isCurrent: isCurrent
+    });
+  }
+  // 只保留合理年齡（85歲以內）的大運
+  dayuns = dayuns.filter(function(d){ return d.age <= 85; });
+  return {dayuns: dayuns, startAge: startAge, shunxing: shunxing};
+}
+
+// ══════════════════════════════════════════════════════════
+// 全域命盤資料
+// ══════════════════════════════════════════════════════════
+var BZ = null;
+
+// ══════════════════════════════════════════════════════════
+// 主函式
+// ══════════════════════════════════════════════════════════
+function runBazi() {
+  var name = document.getElementById('f-name').value.trim() || '命主';
+  var gender = document.getElementById('f-gender').value;
+  var y = parseInt(document.getElementById('f-year').value);
+  var m = parseInt(document.getElementById('f-month').value);
+  var d = parseInt(document.getElementById('f-day').value);
+  var hourIdx = parseInt(document.getElementById('f-hour').value);
+  var status = document.getElementById('f-status').value;
+  var analYear = parseInt(document.getElementById('f-anal-year').value);
+
+  if(!y||!m||!d) { alert('請選擇完整的出生年月日'); return; }
+
+  var yp = getYearPillar(y, m, d);
+  var mp = getMonthPillar(y, m, d);
+  var dp = getDayPillar(y, m, d);
+  var hp = getHourPillar(hourIdx, dp.ganIdx);
+
+  var pillars = [yp, mp, dp, hp];
+  var wx = calcWuxing(pillars.filter(function(p){return p;}));
+
+  // 日主
+  var dayGan = dp.gan;
+  var dayGanIdx = dp.ganIdx;
+  var dayWx = GAN_WX[dayGanIdx];
+
+  // 大運
+  var dyInfo = getDayun(gender, yp.ganIdx, y, m, d, analYear);
+  var currentDayun = dyInfo.dayuns.find(function(d){return d.isCurrent;}) || dyInfo.dayuns[0];
+
+  // 流年干支
+  var lyGanIdx = (analYear - 4) % 10; if(lyGanIdx<0) lyGanIdx+=10;
+  var lyZhiIdx = (analYear - 4) % 12; if(lyZhiIdx<0) lyZhiIdx+=12;
+  var liuNian = {gan:GAN[lyGanIdx],zhi:ZHI[lyZhiIdx],ganIdx:lyGanIdx,zhiIdx:lyZhiIdx};
+
+  // 日主強弱（簡化：計算生身之力）
+  var supportWx = {木:['木','水'],火:['火','木'],土:['土','火'],金:['金','土'],水:['水','金']};
+  var support = supportWx[dayWx];
+  var strength = 0;
+  pillars.filter(function(p){return p;}).forEach(function(p){
+    if(support.indexOf(GAN_WX[p.ganIdx])>=0) strength++;
+    if(support.indexOf(ZHI_WX[p.zhiIdx])>=0) strength++;
+  });
+  var isStrong = strength >= 4;
+
+  BZ = {
+    name:name, gender:gender, y:y, m:m, d:d, hourIdx:hourIdx,
+    status:status, analYear:analYear,
+    yp:yp, mp:mp, dp:dp, hp:hp,
+    wx:wx, dayGan:dayGan, dayGanIdx:dayGanIdx, dayWx:dayWx,
+    dayuns:dyInfo.dayuns, startAge:dyInfo.startAge, shunxing:dyInfo.shunxing,
+    currentDayun:currentDayun, liuNian:liuNian,
+    isStrong:isStrong, strength:strength
+  };
+
+  document.getElementById('r-title').textContent = name + '｜' + y + '/' + m + '/' + d + ' 八字命盤';
+  buildPages();
+  document.getElementById('result').style.display = '';
+  document.getElementById('input-card').style.display = 'none';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════════════════
+// 頁面定義
+// ══════════════════════════════════════════════════════════
+var PAGE_DEFS = [
+  {id:'p1',label:'四柱命盤'},
+  {id:'p2',label:'五行分析'},
+  {id:'p3',label:'日主十神'},
+  {id:'p4',label:'日干人格'},
+  {id:'p5',label:'用神分析'},
+  {id:'p6',label:'性格特質'},
+  {id:'p7',label:'感情婚姻'},
+  {id:'p8',label:'桃花分析'},
+  {id:'p9',label:'正緣時機'},
+  {id:'p10',label:'另一半分析'},
+  {id:'p11',label:'財運事業'},
+  {id:'p12',label:'健康'},
+  {id:'p13',label:'子女宮'},
+  {id:'p14',label:'父母兄弟'},
+  {id:'p15',label:'遷移貴人'},
+  {id:'p16',label:'官祿考試'},
+  {id:'p17',label:'劫數化解'},
+  {id:'p18',label:'前世因緣'},
+  {id:'p19',label:'過去驗證'},
+  {id:'p20',label:'大運流年'},
+  {id:'p21',label:'流月分析'},
+  {id:'p22',label:'合婚'},
+  {id:'p23',label:'人生走勢'},
+  {id:'p24',label:'綜合建議'}
+];
+
+function buildPages() {
+  var nav = document.getElementById('page-nav');
+  nav.innerHTML = '';
+  PAGE_DEFS.forEach(function(p, i) {
+    var b = document.createElement('button');
+    b.className = 'pnav-btn' + (i===0?' on':'');
+    b.textContent = p.label;
+    b.setAttribute('onclick','goPage("'+p.id+'",this)');
+    nav.appendChild(b);
+  });
+  var allHtml = '';
+  PAGE_DEFS.forEach(function(p, i) {
+    allHtml += '<div id="'+p.id+'" class="page'+(i===0?' on':'')+'">'+genPage(p.id)+'</div>';
+  });
+  document.getElementById('pages-container').innerHTML = allHtml;
+}
+
+function goPage(id, el) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.pnav-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById(id).classList.add('on');
+  el.classList.add('on');
+}
+
+// ══════════════════════════════════════════════════════════
+// 頁面內容生成
+// ══════════════════════════════════════════════════════════
+function ganHtml(p) {
+  if(!p) return '<span style="color:var(--mist)">—</span>';
+  var wx = GAN_WX[p.ganIdx];
+  return '<span class="'+WX_COLOR[wx]+'">'+p.gan+'</span>';
+}
+function zhiHtml(p) {
+  if(!p) return '<span style="color:var(--mist)">—</span>';
+  var wx = ZHI_WX[p.zhiIdx];
+  return '<span class="'+WX_COLOR[wx]+'">'+p.zhi+'</span>';
+}
+
+function genPage(id) {
+  var B = BZ;
+  if(!B) return '';
+  var html = '';
+  var isMale = B.gender === 'male';
+  var genderLabel = isMale ? '男命' : '女命';
+
+  // 十神對照（對日主）
+  function shen(p) {
+    if(!p) return '—';
+    return getTenGod(B.dayGanIdx, p.ganIdx);
+  }
+
+  // ── P1：四柱命盤 ──
+  if(id==='p1') {
+    html += '<div class="sec"><div class="sec-head"><div class="sec-icon">壹</div>四柱八字</div>';
+    html += '<div class="pillar-row">';
+    var labels=['年柱','月柱','日柱','時柱'];
+    var ps=[B.yp,B.mp,B.dp,B.hp];
+    var subLabels=['祖上/童年','父母/少年','自身/中年','子女/晚年'];
+    ps.forEach(function(p,i){
+      html += '<div class="pillar">';
+      html += '<div class="p-label">'+labels[i]+'</div>';
+      html += '<div class="p-gan">'+(p?ganHtml(p):'<span style="color:var(--mist)">？</span>')+'</div>';
+      html += '<div class="p-zhi">'+(p?zhiHtml(p):'<span style="color:var(--mist)">？</span>')+'</div>';
+      html += '<div class="p-sub">'+(p?GAN_WX[p.ganIdx]+'&nbsp;'+ZHI_WX[p.zhiIdx]:'')+'<br>'+subLabels[i]+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    // 藏干
+    html += '<div style="margin-top:12px;font-size:.8rem;color:var(--mist);">地支藏干：';
+    [B.yp,B.mp,B.dp,B.hp].forEach(function(p,i){
+      if(!p) return;
+      html += labels[i]+'（'+ZHI_CANG[p.zhiIdx].join('、')+')　';
+    });
+    html += '</div>';
+    // 基本資料
+    html += '<div style="margin-top:14px;padding:12px;background:var(--gold-pale);border-radius:4px;font-size:.84rem;line-height:1.9;">';
+    html += '<strong>'+B.name+'</strong>　'+genderLabel+'　'+B.status+'<br>';
+    html += B.y+'年'+B.m+'月'+B.d+'日'+(B.hourIdx>=0?'　'+ZHI[B.hourIdx]+'時':'　時辰未知')+'<br>';
+    html += '日主：<span class="'+WX_COLOR[B.dayWx]+'"><strong>'+B.dayGan+'（'+B.dayWx+'）</strong></span>　';
+    html += '日主'+(B.isStrong?'<span class="hl">偏強</span>':'<span class="warn">偏弱</span>')+'<br>';
+    html += B.analYear+'年　大運：<span class="gold">'+(B.currentDayun?(B.currentDayun.gan+B.currentDayun.zhi):'—')+'</span>　';
+    html += '流年：<span class="gold">'+B.liuNian.gan+B.liuNian.zhi+'（'+ANIMAL[(B.analYear-4)%12]+'年）</span>';
+    html += '</div></div>';
+  }
+
+  // ── P2：五行分析 ──
+  if(id==='p2') {
+    var wxOrder = ['木','火','土','金','水'];
+    var total = wxOrder.reduce(function(s,k){return s+B.wx[k];},0);
+    var maxWx = wxOrder.reduce(function(a,b){return B.wx[a]>B.wx[b]?a:b;});
+    var minWx = wxOrder.reduce(function(a,b){return B.wx[a]<B.wx[b]?a:b;});
+
+    html += '<div class="sec"><div class="sec-head"><div class="sec-icon">貳</div>五行強弱分析</div>';
+    // 圖表
+    html += '<div class="wx-bars">';
+    wxOrder.forEach(function(wx){
+      var pct = total>0 ? Math.round(B.wx[wx]/total*100) : 0;
+      var barH = Math.max(pct*1.1, 4);
+      html += '<div class="wx-bar-wrap">';
+      html += '<div class="wx-bar-val" style="color:'+WX_CHART_COLOR[wx]+'">'+pct+'%</div>';
+      html += '<div class="wx-bar" style="height:'+barH+'px;background:'+WX_CHART_COLOR[wx]+';"></div>';
+      html += '<div class="wx-bar-label">'+wx+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+
+    html += '<div class="sec-body">';
+    html += '<p><span class="hl">最強五行：'+maxWx+'</span>　<span class="warn">最弱五行：'+minWx+'</span></p>';
+
+    // 五行解析
+    var wxChar = {
+      木:'代表成長、仁慈、創意、木氣旺者個性直接、有衝勁，但容易急躁固執。',
+      火:'代表熱情、表達、智慧，火氣旺者外向活潑、注重形象，但容易衝動急躁。',
+      土:'代表穩定、信義、包容，土氣旺者踏實可靠、重視承諾，但容易保守固執。',
+      金:'代表果斷、正義、執行力，金氣旺者組織能力強、重視規則，但容易剛硬。',
+      水:'代表智慧、靈活、溝通力，水氣旺者思維靈活、善於謀略，但容易多疑優柔。'
+    };
+    html += '<p>命盤中'+maxWx+'氣最旺：'+wxChar[maxWx]+'</p>';
+
+    // 缺少的五行
+    wxOrder.forEach(function(wx){
+      if(B.wx[wx] < 1) {
+        var wxMiss = {
+          木:'命盤木氣不足，代表在仁慈、創意、成長方面需要刻意培養，可能較難堅持長期計畫。',
+          火:'命盤火氣不足，禮儀、表達、熱情度較弱，可能較內斂保守，需要多練習表達自己。',
+          土:'命盤土氣不足，信用、穩定度、包容心需要後天強化，容易缺乏安全感。',
+          金:'命盤金氣不足，決斷力、執行力偏弱，容易優柔寡斷，需要刻意練習果斷行動。',
+          水:'命盤水氣不足，智慧、靈活度、溝通力需要培養，可能較固執，不易聽取他人意見。'
+        };
+        html += '<p><span class="warn">缺'+wx+'：</span>'+wxMiss[wx]+'</p>';
+      }
+    });
+
+    // 五行與日主關係
+    html += '<p><span class="hl">日主'+B.dayWx+'（'+B.dayGan+'）</span>目前'+(B.isStrong?'能量偏強，適合走洩耗之路，從事需要輸出能量的事業最適合。':'能量偏弱，需要生扶，適合在有支持的環境下發展，避免單打獨鬥。')+'</p>';
+    html += '</div></div>';
+  }
+
+  // ── P3：日主與十神 ──
+  if(id==='p3') {
+    html += '<div class="sec"><div class="sec-head"><div class="sec-icon">參</div>日主格局與十神</div>';
+    html += '<div class="sec-body">';
+    html += '<p>日主：<span class="'+WX_COLOR[B.dayWx]+'"><strong>'+B.dayGan+'（'+GAN_YY[B.dayGanIdx]+''+B.dayWx+'）</strong></span></p>';
+    html += '<p>'+(B.isStrong?'日主偏強，八字中生助之力較多，個性較強勢獨立，不喜歡被管，適合自主發展。':'日主偏弱，八字中生助之力較少，個性較謙遜，需要他人支持，適合團隊或有依靠的環境。')+'</p>';
+    html += '</div>';
+    // 十神表格
+    html += '<div style="margin:12px 0;font-size:.82rem;">';
+    html += '<div style="font-weight:700;color:var(--jade);margin-bottom:8px;">各柱十神對照</div>';
+    html += '<div class="shen-grid">';
+    var shenLabels=['年干','月干','日干（自）','時干'];
+    var ps2=[B.yp,B.mp,B.dp,B.hp];
+    ps2.forEach(function(p,i){
+      if(!p) return;
+      var s = i===2 ? '本命' : shen(p);
+      html += '<div class="shen-item"><div class="sn">'+p.gan+'</div><div class="sl">'+shenLabels[i]+'<br>'+s+'</div></div>';
+    });
+    html += '</div></div>';
+    // 十神解析
+    var shenDesc = {
+      '比肩':'比肩旺者：獨立心強、自信、不服輸，但容易固執，人際上有時顯得自我。',
+      '劫財':'劫財旺者：競爭意識強、行動力好，但容易因財務或情感上的糾紛耗損。',
+      '食神':'食神旺者：才藝豐富、有口福、生活享受能力強，是溫和的貴人星。',
+      '傷官':'傷官旺者：聰明有才，但容易得罪人，感情或工作上常有波折。',
+      '偏財':'偏財旺者：偏財運佳，善於交際，但錢財來去較快，需注意理財。',
+      '正財':'正財旺者：踏實努力，正財收入穩定，重視實際，但有時過於保守。',
+      '偏官(七殺)':'七殺旺者：行動力強、有霸氣，適合挑戰性工作，但壓力大，需注意健康。',
+      '正官':'正官旺者：重視規矩、有責任感，適合公職或管理職，感情上較傳統。',
+      '偏印':'偏印旺者：直覺強、有靈性，思維獨特，但有時容易懶散或鑽牛角尖。',
+      '正印':'正印旺者：學習能力強、有貴人緣，性格溫和，但有時過度依賴他人。'
+    };
+    // 找命盤中最強的十神
+    var shenCount = {};
+    [B.yp,B.mp,B.hp].forEach(function(p){
+      if(!p) return;
+      var s = shen(p);
+      shenCount[s] = (shenCount[s]||0) + 1;
+    });
+    var mainShen = Object.keys(shenCount).sort(function(a,b){return shenCount[b]-shenCount[a];})[0];
+    if(mainShen && shenDesc[mainShen]) {
+      html += '<div class="sec-body"><p><span class="hl">命盤主要十神：'+mainShen+'</span></p><p>'+shenDesc[mainShen]+'</p></div>';
+    }
+    html += '</div>';
+  }
+
+  // ── P4：日干人格（韓國式詳細版）──
+  if(id==='p4') {
+    var RIGAN={
+      '甲':{name:'甲木——參天大樹',core:'你是一棵筆直向上生長的大樹。外表看起來溫和，但內心有一股任何人都難以動搖的意志力。你不是那種喜歡彎腰妥協的人，一旦認定了方向就會一直走下去，哪怕旁邊的人都說不行。',love:'感情上你是慢熱型。剛開始不容易敞開心，但一旦認定了對方，就是那種「這輩子只愛你一個人」的類型。你的愛很深、很沉，但也因為太在意，有時候反而放不開、放不下。',money:'賺錢靠的是長期積累，不是一夜暴富型。你適合做有深度、有根基的事業，時間是你最大的資產。',weakness:'最大的弱點是固執。你的堅持有時候是優點，有時候卻讓身邊的人喘不過氣，學會適時彎腰，反而能走得更遠。',past:'你的過去大概率有過一段讓你非常堅持、甚至執著的事——可能是一段感情，可能是一個目標，外人看起來可能早就該放棄了，但你還是撐了很久。'},
+      '乙':{name:'乙木——藤蔓香草',core:'你是一株柔韌的藤蔓，看起來柔軟，但其實比任何人都難以被真正打倒。你懂得在環境中找到縫隙生長，適應力超強，而且你有一種天生的美感和藝術氣質，能把生活過得很有質感。',love:'感情上你細膩敏感，對對方的情緒感知力極強，幾乎能在對方還沒說話之前就知道他心裡在想什麼。但這份敏感有時候也是負擔，因為你也容易把對方的情緒都往自己身上攬。',money:'你的財運和人際關係深度綁定，善用你天生的親和力和美感，走服務、創意、或與美有關的方向，財運最旺。',weakness:'有時候太在乎別人的眼光，不敢做自己。你最大的課題是：學會在優雅之餘，也能說出那個讓人不舒服的真話。',past:'你大概有過一段在夾縫中求生存的時期——可能是在某個讓你不舒服的環境裡硬撐，但你用你特有的方式找到了出路。'},
+      '丙':{name:'丙火——太陽之火',core:'你就是那種走進任何空間都會讓人感受到的人。你的能量是發光的，熱情、外向、樂於助人，身邊的人在你旁邊往往覺得很溫暖。你天生有一種感染力，讓人忍不住被你吸引。',love:'感情上你熱情主動，喜歡了就直接衝，不喜歡繞彎子。你給的愛很大方、很直接，但有時候溫度太高，反而讓對方覺得壓力大。你最需要的伴侶，是那種能接住你的熱情、又不會被你的光芒淹沒的人。',money:'你的財運和社交圈密切相關，你有多少資源，幾乎等於你有多少人脈。擴展圈子就是擴展財運。',weakness:'情緒起伏大，好的時候超好，差的時候讓身邊的人不知道怎麼辦。學會穩定自己的情緒輸出，是你最重要的功課。',past:'你的過去大概有過幾次因為太衝動、太熱情而吃虧的經歷——可能是感情，可能是工作，衝過頭了然後需要花時間收拾。'},
+      '丁':{name:'丁火——燭光之火',core:'你是一根蠟燭，光不大，但卻能在黑暗中讓人感受到溫度。你比丙火更細膩、更溫柔，你的付出不是大聲廣播型，而是默默地、持續地在身邊給予溫暖。很多人在最低谷的時候，會想到你。',love:'感情上你很容易為對方犧牲，你的愛是那種「只要你好，我做什麼都願意」的類型。但正因為如此，你也特別容易受傷——因為你給了很多，但對方不一定感受得到你付出的重量。',money:'財運和你的才藝、技術直接相關。你適合靠一技之長慢慢積累，不適合快進快出的模式。',weakness:'容易悶燒，把委屈和情緒積在心裡，不說出來。久了之後會突然爆發，讓身邊的人措手不及。',past:'你的過去幾乎一定有過一段默默付出、卻沒有被看見的經歷。可能是在一段感情裡，可能是在工作中，你用心了很久，但結果讓你心寒。'},
+      '戊':{name:'戊土——高山大地',core:'你是高山，沉穩、厚重、可以依靠。你給人的第一印象就是「這個人靠得住」，而且你確實靠得住——你有責任感，說到做到，不喜歡花言巧語。你的存在本身就讓身邊的人感到安心。',love:'感情上你是很傳統的類型，重視承諾和穩定。你不擅長說甜蜜的話，但你會用行動證明你的在乎。你最怕的是感情中的不確定性，給你穩定感是讓你安心的最好方式。',money:'財運穩健，適合長期投資和積累，不適合短線操作。你的財富是慢慢堆出來的，但一旦堆起來，就很難垮掉。',weakness:'有時候太固執，對新事物接受度低。世界變化很快，適時開放你的心，讓新的能量進來。',past:'你的過去有過一段承擔了超過自己年齡的責任的時期——可能是家庭，可能是工作，你很早就學會了「撐著」是什麼感覺。'},
+      '己':{name:'己土——田園沃土',core:'你是肥沃的田地，滋養萬物。你有一種溫柔的包容力，能夠接納各種不同的人和事，這讓你成為很多人的心理支柱。你不像戊土那樣高高在上，你更接地氣，更懂得人的感受。',love:'感情上你付出很多，而且是那種細水長流型的付出——不是大起大落，而是每天都在照顧對方的小細節。但你有時候太過包容，容易讓對方把你的好當成理所當然。',money:'你的財運和土地、房產、傳統行業有關，也適合做服務類或需要長期信任關係的事業。',weakness:'容易想太多，也容易在情緒上內耗。你需要學會「不是所有問題都需要你來扛」。',past:'你的過去大概率有過一段幫別人解決問題、卻把自己的事情放一邊的時期。你很早就學會了照顧別人，但有時候忘了照顧自己。'},
+      '庚':{name:'庚金——鋼鐵利劍',core:'你是一把剛從鍛造爐出來的利劍——有力量、有鋒芒，目標感極強。你做事果斷，說一是一，不喜歡模稜兩可。你的存在感很強，走進一個空間，別人很難忽視你。',love:'感情上你直接、有主導欲，喜歡了就直說，不喜歡拐彎抹角。你對另一半的標準很高，因為你對自己的標準也很高。你需要一個能讓你尊重、有自己想法的伴侶，太軟弱或太依賴的人反而讓你提不起勁。',money:'你有天生的商業嗅覺和執行力，適合走競爭型的行業或創業。你的財運跟行動力成正比，越行動越有錢。',weakness:'有時候太直、太硬，容易傷人而不自知。學會「柔軟表達」，你的影響力會更大。',past:'你的過去一定有過幾次因為太強勢或太直接而讓關係出現裂痕的經歷。你其實是好意，但別人感受到的是壓力。'},
+      '辛':{name:'辛金——珠寶美玉',core:'你是一顆打磨精細的珠寶——有美感、有品味、有自己的標準。你對生活品質有要求，對自我形象很在意，很多人覺得你很難接近，但其實你只是對「值不值得」這件事很謹慎。',love:'感情上你不容易動心，但一旦動了就很認真、很深情。你對伴侶的品味和質感有要求，不是外貌，而是那種「有內涵、有自己」的感覺。你最怕遇到不懂珍惜你的人。',money:'你的財運和品質、美感、精緻類的事業有關——珠寶、設計、高端服務、美容等。你的品味本身就是你的競爭優勢。',weakness:'有時候太挑剔，對人對事的標準太高，讓人覺得難以靠近。學會在堅持品質的同時，也能接受不完美。',past:'你的過去有過一段覺得自己的好沒有被看見、沒有被珍惜的時期。你明明很好，卻在某段關係或某個環境裡被忽視了。'},
+      '壬':{name:'壬水——大江大海',core:'你是一片大海——深不可測、包容萬物、流動自如。你的思維廣闊，能同時看見很多面向，這讓你有一種別人沒有的洞察力。你很難被完全了解，因為你自己都不確定自己有多深。',love:'感情上你需要自由，被束縛的感情讓你窒息。你喜歡有深度的交流，但也需要自己的空間。你是那種「感情濃郁但不能失去自己」的類型，最適合你的伴侶，是那個能和你並肩走，而不是黏著你走的人。',money:'你的財運和流動有關——貿易、傳播、金融、科技，任何需要快速流通和靈活應變的行業你都適合。',weakness:'情緒像水一樣容易受外界影響，多疑、想太多是你的老毛病。學會沉澱和信任，是你最重要的功課。',past:'你的過去有過幾次因為思慮太多、反而錯過了機會的經歷。你想清楚了，但時機已經過了。'},
+      '癸':{name:'癸水——甘露細雨',core:'你是一場細雨，溫柔、滋潤、悄悄滲透進所有縫隙。你有極強的感知力和直覺，能感受到別人感受不到的東西，有時候你說出的一句話，會讓對方覺得「你怎麼知道我心裡在想什麼」。',love:'感情上你是極度敏感的類型，對方的一個眼神、一個語氣，你都能感受到背後的意思。這讓你非常體貼，但也讓你很容易受傷。你需要一個讓你有安全感的人——不是有多厲害，而是讓你覺得「在你身邊我可以做自己」。',money:'你的財運和靈性、感知、療癒類有關。你適合做需要細膩感知力的工作，把你的直覺和感受力變成你的職業優勢。',weakness:'容易自我懷疑，也容易把自己的情緒全壓在心底。你最大的功課是：學會相信自己的感受，並且勇敢說出來。',past:'你的過去有過很多「我早就感覺到了，但我沒有說」的時刻。你的直覺比任何人都準，但你沒有信任它。'}
+    };
+    var ri=RIGAN[B.dayGan]||{name:B.dayGan,core:'',love:'',money:'',weakness:'',past:''};
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">四</div>日干人格深度分析</div><div class="sec-body">';
+    html+='<div style="background:var(--gold-pale);border-radius:8px;padding:14px;margin-bottom:16px;text-align:center;">';
+    html+='<div style="font-family:\'Noto Serif TC\',serif;font-size:2rem;font-weight:900;color:var(--gold)">'+B.dayGan+'</div>';
+    html+='<div style="font-size:.9rem;font-weight:700;color:var(--jade);margin-top:4px">'+ri.name+'</div></div>';
+    html+='<p><span class="hl">核心性格：</span>'+ri.core+'</p>';
+    html+='<p style="margin-top:10px"><span class="hl">感情模式：</span>'+ri.love+'</p>';
+    html+='<p style="margin-top:10px"><span class="hl">財富觀：</span>'+ri.money+'</p>';
+    html+='<p style="margin-top:10px"><span class="warn">最大弱點：</span>'+ri.weakness+'</p>';
+    html+='<div class="tip">過去的你：'+ri.past+'</div>';
+    html+='</div></div>';
+  }
+
+  // ── P5：用神分析 ──
+  if(id==='p5') {
+    // 用神：日主弱則找生助之神，日主強則找洩剋之神
+    var sheng2={木:'水',火:'木',土:'火',金:'土',水:'金'};
+    var ke2={木:'金',火:'水',土:'木',金:'火',水:'土'};
+    var xie={木:'火',火:'土',土:'金',金:'水',水:'木'};
+    var yongShen, xiShen, jiShen;
+    if(!B.isStrong) {
+      yongShen=sheng2[B.dayWx]; // 生身之神
+      xiShen=B.dayWx; // 比劫幫身
+      jiShen=ke2[B.dayWx]; // 剋身之神（忌）
+    } else {
+      yongShen=xie[B.dayWx]; // 洩身之神（食傷）
+      xiShen=ke2[B.dayWx]; // 剋身之神（官殺）
+      jiShen=sheng2[B.dayWx]; // 生身之神（印，強命不需要）
+    }
+    var yongDesc={
+      木:'用神是木——你需要木的能量來平衡命盤。多接觸綠色植物、往東方或東南方發展、從事與木相關的行業（教育、文化、設計、醫療）。',
+      火:'用神是火——你需要火的能量。多曬太陽、穿暖色系、南方方位對你有利、從事熱情表達類工作最順。',
+      土:'用神是土——你需要土的穩定能量。多接觸大地、黃色系、中部地區對你有利、傳統行業或房地產方向適合你。',
+      金:'用神是金——你需要金的收斂力量。白色系、西方位置、金融法律類行業對你最有幫助。',
+      水:'用神是水——你需要水的流動和智慧。藍色系、北方、從事傳播或科技類最順。'
+    };
+    var wuxingAdv={
+      木:{color:'綠色、青色',dir:'東方、東南方',food:'綠色蔬菜、酸味食物',job:'教育、文創、設計、醫療、農業'},
+      火:{color:'紅色、橙色、紫色',dir:'南方',food:'苦味食物、紅色食材',job:'媒體、銷售、表演、餐飲、娛樂'},
+      土:{color:'黃色、棕色、米色',dir:'中央、東北、西南',food:'甜味、根莖類蔬菜',job:'房地產、農業、傳統製造、服務業'},
+      金:{color:'白色、銀色、金色',dir:'西方、西北方',food:'辛辣食物、白色食材',job:'金融、法律、工程、機械、珠寶'},
+      水:{color:'黑色、深藍、深灰',dir:'北方、東北方',food:'鹹味食物、海鮮',job:'傳播、科技、貿易、物流、諮詢'}
+    };
+    var ya=wuxingAdv[yongShen];
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">五</div>用神分析（命盤補強方向）</div><div class="sec-body">';
+    html+='<p>日主<span class="hl">'+B.dayGan+'（'+B.dayWx+'）</span>目前'+(B.isStrong?'偏強，需要洩耗和制約。':'偏弱，需要生扶和幫助。')+'</p>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0;">';
+    html+='<div style="background:var(--jade-lt);border:1px solid #a0ccc4;border-radius:6px;padding:12px;text-align:center"><div style="font-size:.7rem;color:var(--mist);margin-bottom:4px">用神（最需要）</div><div style="font-family:\'Noto Serif TC\',serif;font-size:1.6rem;font-weight:900;color:var(--jade)">'+yongShen+'</div></div>';
+    html+='<div style="background:var(--gold-pale);border:1px solid var(--gold-lt);border-radius:6px;padding:12px;text-align:center"><div style="font-size:.7rem;color:var(--mist);margin-bottom:4px">喜神（有幫助）</div><div style="font-family:\'Noto Serif TC\',serif;font-size:1.6rem;font-weight:900;color:var(--gold)">'+xiShen+'</div></div>';
+    html+='<div style="background:#fff0ee;border:1px solid #f0c8c0;border-radius:6px;padding:12px;text-align:center"><div style="font-size:.7rem;color:var(--mist);margin-bottom:4px">忌神（要避開）</div><div style="font-family:\'Noto Serif TC\',serif;font-size:1.6rem;font-weight:900;color:var(--rust)">'+jiShen+'</div></div>';
+    html+='</div>';
+    html+='<p>'+yongDesc[yongShen]+'</p>';
+    html+='<p style="margin-top:12px"><span class="hl">具體補運建議：</span></p>';
+    html+='<p>🎨 顏色：多穿<strong>'+ya.color+'</strong></p>';
+    html+='<p>🧭 方位：往<strong>'+ya.dir+'</strong>發展或居住</p>';
+    html+='<p>🥗 飲食：多吃<strong>'+ya.food+'</strong></p>';
+    html+='<p>💼 事業方向：<strong>'+ya.job+'</strong>與你的用神最配</p>';
+    html+='<div class="tip">用神是你命盤的「補藥」。當你感到能量低落、事情不順的時候，往用神的方向靠，往往能感受到明顯的改善。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P6：性格特質 ──
+  if(id==='p6') {
+    var wxOrder2=['木','火','土','金','水'];
+    var maxWx2=wxOrder2.reduce(function(a,b){return B.wx[a]>B.wx[b]?a:b;});
+    var charMap = {
+      木:{core:'你的命盤木氣最旺，天生具備仁慈、直率和成長的能量。',trait:'個性直接、有創意、追求進步，不喜歡一成不變。說話直接有時會讓人覺得衝，但出發點通常是真心的。',strength:'創意思維、學習能力強、有衝勁、待人真誠',weakness:'容易急躁、固執己見、有時不顧後果先衝再說'},
+      火:{core:'你的命盤火氣最旺，天生具備熱情、表達力和感染力。',trait:'外向活潑、注重形象和禮儀，說話有感染力，容易成為眾人焦點，但情緒起伏較大，好的時候很好，差的時候很差。',strength:'表達力強、熱情感人、有感染力、樂於助人',weakness:'情緒不穩、容易衝動、有時太在意別人眼光'},
+      土:{core:'你的命盤土氣最旺，天生具備穩重、包容和信義的能量。',trait:'踏實可靠、重視承諾，是大家眼中最值得信賴的那種人。但有時候太過保守，難以接受新的變化或想法。',strength:'踏實可靠、有責任感、包容力強、重視信義',weakness:'保守固執、行動較慢、有時過度謹慎錯失機會'},
+      金:{core:'你的命盤金氣最旺，天生具備果斷、正義和執行力。',trait:'做事有條理、重視規則和公平，說話直接有力，有時候讓人覺得太嚴厲，但其實是希望把事情做對。',strength:'組織能力強、決斷力好、有正義感、執行力旺',weakness:'有時過於剛硬、不夠圓融、容易與人產生摩擦'},
+      水:{core:'你的命盤水氣最旺，天生具備智慧、靈活和溝通能力。',trait:'思維靈活、善於謀略，能快速看清楚局勢，是天生的策略型人才。但有時候想太多、多疑，反而讓自己很累。',strength:'智慧過人、溝通能力強、靈活應變、善於謀略',weakness:'容易多疑優柔、想太多、有時缺乏行動力'}
+    };
+    var ch = charMap[maxWx2];
+    html += '<div class="sec"><div class="sec-head"><div class="sec-icon">肆</div>性格特質分析</div><div class="sec-body">';
+    html += '<p>'+ch.core+'</p><p>'+ch.trait+'</p>';
+    html += '<p><span class="hl">核心優點：</span>'+ch.strength+'</p>';
+    html += '<p><span class="warn">需要注意：</span>'+ch.weakness+'</p>';
+
+    // 日主強弱影響性格
+    html += '<p><span class="hl">日主'+(B.isStrong?'偏強':'偏弱')+'的性格影響：</span>'+(B.isStrong?'你的自我意識很強，有主見、有主導欲，不喜歡被指揮，適合走自己的路。但有時候太過堅持自己，容易和別人產生摩擦，學會適時妥協是重要的功課。':'你比較謙遜、善於配合他人，是很好的團隊成員或輔助者。但有時候缺乏自信，容易隨波逐流，學會相信自己的判斷是重要的功課。')+'</p>';
+
+    // 月支性格
+    var mZhi = ZHI[B.mp.zhiIdx];
+    var mZhiChar = {
+      子:'子月（冬水之時）生，個性敏感細膩，思維深邃，有智慧但容易想太多。',
+      丑:'丑月（寒土之時）生，個性踏實保守，重視傳統，做事有耐心但行動較慢。',
+      寅:'寅月（木氣初升）生，個性積極進取，有衝勁，是天生的開創者。',
+      卯:'卯月（木氣最旺）生，個性溫和但有韌性，重視人際，有藝術天賦。',
+      辰:'辰月（土氣轉換）生，個性沉穩，有包容心，但有時思慮過重。',
+      巳:'巳月（火氣初升）生，個性聰明機智，有表演欲，善於表達自己。',
+      午:'午月（火氣最旺）生，個性熱情直爽，行動力強，但情緒波動較大。',
+      未:'未月（火土交替）生，個性溫柔細心，重視家庭，有藝術氣質。',
+      申:'申月（金氣初升）生，個性果斷，執行力強，有商業頭腦。',
+      酉:'酉月（金氣最旺）生，個性精細，重視品質，有美感，但有時過於挑剔。',
+      戌:'戌月（金土收藏）生，個性正直，有正義感，重視信義，較為固執。',
+      亥:'亥月（水氣收藏）生，個性深沉，有靈性，思維獨特，重視精神層面。'
+    };
+    html += '<p><span class="hl">月支'+mZhi+'的性格影響：</span>'+(mZhiChar[mZhi]||'')+'</p>';
+    html += '<div class="tip">你的核心特質是「'+ch.strength.split('、')[0]+'」，這是你天生帶來的優勢，善加利用，在任何領域都能發揮。</div>';
+    html += '</div></div>';
+  }
+
+  // ── P7：感情婚姻 ──
+  if(id==='p7') {
+    var isMaleP7=B.gender==='male';
+    var spouseZhiP7=ZHI[B.dp.zhiIdx];
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">七</div>感情與婚姻分析</div><div class="sec-body">';
+    html+='<p>感情狀態：<span class="hl">'+B.status+'</span></p>';
+
+    var spouseDesc={
+      子:'夫妻宮在子，另一半通常聰明、有智慧，重視精神層面的交流。',
+      丑:'夫妻宮在丑，另一半通常踏實可靠，重視家庭，但有時較保守。',
+      寅:'夫妻宮在寅，另一半通常積極進取，有活力，但有時較難管束。',
+      卯:'夫妻宮在卯，另一半通常溫和體貼，有藝術氣質，但有時優柔寡斷。',
+      辰:'夫妻宮在辰，另一半通常沉穩踏實，但有時固執，需要耐心相處。',
+      巳:'夫妻宮在巳，另一半通常聰明機智，有表達力，但有時較自我。',
+      午:'夫妻宮在午，另一半通常熱情直爽，但情緒起伏較大，需要包容。',
+      未:'夫妻宮在未，另一半通常溫柔細心，重視家庭，有藝術氣質。',
+      申:'夫妻宮在申，另一半通常果斷能幹，有執行力，但有時較嚴肅。',
+      酉:'夫妻宮在酉，另一半通常注重品質和細節，有美感，但可能較挑剔。',
+      戌:'夫妻宮在戌，另一半通常正直有義氣，但有時較固執，需要溝通。',
+      亥:'夫妻宮在亥，另一半通常有深度，重視精神交流，但有時神秘難懂。'
+    };
+    html+='<p><span class="hl">夫妻宮（日支：'+spouseZhiP7+'）：</span>'+(spouseDesc[spouseZhiP7]||'')+'</p>';
+
+    var loveStyle7={
+      木:{style:'你在感情中主動積極，有行動力，但有時太直接，不夠細膩，容易忽略對方的感受。',need:'需要一個有耐心、能包容你的直接個性的伴侶。',lesson:'學會在感情中放慢腳步，多聽多感受，而不只是主動推進。'},
+      火:{style:'你在感情中熱情洋溢，重視浪漫，但情緒起伏讓伴侶有時不知道怎麼應對。',need:'需要一個穩定、能接住你情緒的伴侶。',lesson:'學會在感情中管理情緒，不要把工作壓力帶進感情裡。'},
+      土:{style:'你在感情中踏實穩重，重視承諾，但有時表達太少，對方感受不到你的在乎。',need:'需要一個有安全感、不需要你每天甜言蜜語的伴侶。',lesson:'刻意練習說出「我愛你」、「謝謝你」，情感表達比你想的更重要。'},
+      金:{style:'你在感情中有主導欲，重視對方的能力，有時對感情過於理性。',need:'需要一個有自己目標、能和你互相尊重的伴侶。',lesson:'學會在感情中展現柔軟，不是每件事都要你來決定。'},
+      水:{style:'你在感情中細膩敏感，對對方的情緒感知力強，但有時多疑，容易想太多。',need:'需要一個真誠穩定、讓你有安全感的伴侶。',lesson:'學會相信對方，不要把過去的傷害帶進現在的關係裡。'}
+    };
+    var ls7=loveStyle7[B.dayWx];
+    html+='<p><span class="hl">感情模式：</span>'+ls7.style+'</p>';
+    html+='<p><span class="hl">適合你的伴侶：</span>'+ls7.need+'</p>';
+
+    var lyTenGodL7=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    var loveYearTip7='';
+    if(isMaleP7){
+      loveYearTip7=(lyTenGodL7==='正財'||lyTenGodL7==='偏財')?'今年流年出現財星，感情有動靜，單身者容易遇到對象，有伴侶者感情加溫。':'今年流年財星不顯，感情宜穩定深化，不宜強求新緣分。';
+    }else{
+      loveYearTip7=(lyTenGodL7==='正官'||lyTenGodL7==='偏官(七殺)')?'今年流年出現官星，感情有明顯動靜，單身女命容易遇到正緣，已婚者需注意感情變化。':'今年流年官星不顯，感情宜以自身成長為重，緣分水到渠成。';
+    }
+    html+='<p><span class="hl">'+B.analYear+'年感情運：</span>'+loveYearTip7+'</p>';
+    html+='<div class="tip">這輩子感情的功課：'+ls7.lesson+'</div>';
+    html+='</div></div>';
+  }
+
+  // ── P8：桃花分析 ──
+  if(id==='p8') {
+    var isMaleP8=B.gender==='male';
+    var peachZhi8=['子','午','卯','酉'];
+    var peachCount8=0;
+    [B.yp,B.mp,B.dp,B.hp].forEach(function(p){if(p&&peachZhi8.indexOf(p.zhi)>=0)peachCount8++;});
+    var lyPeach8=peachZhi8.indexOf(B.liuNian.zhi)>=0;
+    var lyTenGodP8=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    var loveStar8=isMaleP8?['正財','偏財']:['正官','偏官(七殺)'];
+    var lyHasLoveStar8=loveStar8.indexOf(lyTenGodP8)>=0;
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">八</div>桃花與感情時機</div><div class="sec-body">';
+    html+='<p><span class="hl">命盤桃花強度：</span>';
+    if(peachCount8>=3) html+='<span class="gold">桃花極旺</span>，命盤中多個子午卯酉，感情緣分多，但要注意感情複雜的問題。';
+    else if(peachCount8>=2) html+='<span class="hl">桃花旺盛</span>，感情機會多，人緣佳，容易吸引異性。';
+    else if(peachCount8===1) html+='桃花適中，感情緣分正常，需要主動經營。';
+    else html+='命盤桃花星較少，感情需要後天努力，不會自動送上門，但一旦認真就很穩。';
+    html+='</p>';
+
+    html+='<p><span class="hl">'+B.analYear+'年桃花運：</span>';
+    if(lyPeach8&&lyHasLoveStar8) html+='今年流年地支帶桃花（'+B.liuNian.zhi+'），同時帶'+(isMaleP8?'財星':'官星')+'，感情動靜極大，單身者很可能今年遇到正緣，有伴侶者感情會有重大進展或波折。';
+    else if(lyPeach8) html+='今年流年地支帶桃花（'+B.liuNian.zhi+'），感情機會增加，多出門社交，緣分就在生活中。';
+    else if(lyHasLoveStar8) html+='今年流年帶'+(isMaleP8?'財星':'官星')+'（'+lyTenGodP8+'），感情有動靜，但需要主動把握，不會自動出現。';
+    else html+='今年桃花能量較平，感情不宜強求，以自身成長為主，緣分水到渠成。';
+    html+='</p>';
+
+    html+='<p><span class="hl">你容易吸引的對象特質：</span>';
+    var attract8={木:'有活力、有想法、直率、重視成長的人',火:'熱情外向、重視形象、有感染力的人',土:'踏實穩重、重視家庭、可靠有責任感的人',金:'果斷有能力、重視原則、有執行力的人',水:'聰明靈活、溝通能力強、有智慧的人'};
+    html+=attract8[B.dayWx]+'。</p>';
+
+    html+='<p><span class="warn">爛桃花提醒：</span>';
+    if(peachCount8>=2) html+='命盤桃花旺，要注意分辨真心和逢場作戲，感情投入前多觀察對方的行為一致性。';
+    else html+='命盤桃花不算旺，遇到主動靠近的對象反而要多觀察，真正的緣分通常是自然發展的。';
+    html+='</p>';
+
+    html+='<div class="tip">最容易遇到正緣的場合：'+(B.dayWx==='木'?'戶外活動、學習課程、興趣社群':B.dayWx==='火'?'社交場合、表演藝術、朋友聚會':B.dayWx==='土'?'工作環境、朋友介紹、傳統場合':B.dayWx==='金'?'職場、專業社群、正式場合':'旅行、網路、文化藝術活動')+'。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P11：財運事業 ──
+  if(id==='p11') {
+    var wxOrder3=['木','火','土','金','水'];
+    var maxWx3=wxOrder3.reduce(function(a,b){return B.wx[a]>B.wx[b]?a:b;});
+    var keMap={木:'土',火:'金',土:'水',金:'木',水:'火'};
+    var financeWx=keMap[B.dayWx];
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十一</div>財運與事業分析</div><div class="sec-body">';
+    var financeMap={
+      木:{wealth:'財星是土，'+(B.wx['土']>3?'命盤土氣旺，財運不錯，但需注意不要因固執錯失機會。':'土氣偏弱，正財需努力積累，要主動開拓。'),earn:'靠創意、學習帶來財富，知識型、教育型、創意類事業最適合。'},
+      火:{wealth:'財星是金，'+(B.wx['金']>3?'金氣旺，財運較好，尤其金融或管理領域。':'金氣偏弱，需建立財務規劃，避免衝動消費。'),earn:'靠熱情、表達力和人際帶來財富，銷售、公關、服務類最適合。'},
+      土:{wealth:'財星是水，'+(B.wx['水']>3?'水氣旺，智慧帶來財富，財運較好。':'水氣偏弱，財運需後天努力，適合長期穩健理財。'),earn:'靠踏實和信義帶來財富，房地產、傳統行業、服務業最適合。'},
+      金:{wealth:'財星是木，'+(B.wx['木']>3?'木氣旺，財運活躍，創業開拓機會多。':'木氣偏弱，需主動開拓，等待機會反而錯失。'),earn:'靠執行力和組織能力帶來財富，金融、工程、法律或管理類最適合。'},
+      水:{wealth:'財星是火，'+(B.wx['火']>3?'火氣旺，財運有起色，社交帶動收入。':'火氣偏弱，需靠熱情和行動力創造財富。'),earn:'靠智慧和溝通帶來財富，諮詢、媒體、科技類最適合。'}
+    };
+    var fm=financeMap[B.dayWx];
+    html+='<p><span class="hl">財運格局：</span>'+fm.wealth+'</p>';
+    html+='<p><span class="hl">賺錢方式：</span>'+fm.earn+'</p>';
+    var careerMap={木:'教育、文化、出版、設計、農業、中醫、社工',火:'媒體、娛樂、公關、銷售、美容、餐飲、電子',土:'房地產、建築、農業、金融保險、傳統製造',金:'金融、法律、軍警、工程、機械、外貿、製造',水:'傳播、媒體、貿易、物流、諮詢、心理、IT科技'};
+    html+='<p><span class="hl">最適合的事業方向：</span>'+careerMap[maxWx3]+'</p>';
+    var lyTenGodW=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    var wealthTip=(['正財','偏財'].indexOf(lyTenGodW)>=0)?B.analYear+'年帶財星（'+lyTenGodW+'），財運積極，主動開拓收入最有效。':(['食神','傷官'].indexOf(lyTenGodW)>=0)?B.analYear+'年帶食傷，靠才華帶動收入，展示能力是今年財運關鍵。':B.analYear+'年財星不顯，守成規劃，不宜大額投資。';
+    html+='<p><span class="hl">'+B.analYear+'年財運：</span>'+wealthTip+'</p>';
+    html+='<p><span class="hl">適合合夥嗎：</span>'+(B.isStrong?'日主偏強，自我意識強，獨立發展或自己主導更適合，合夥容易有主導權之爭。':'日主偏弱，適合有互補的合夥人，借力使力往往效果更好。')+'</p>';
+
+    // 財運高峰年齡
+    var currentAgeP11=B.analYear-B.y;
+    var wealthYun=B.dayuns.find(function(dy){var sg=getTenGod(B.dayGanIdx,dy.ganIdx);return dy.age+10>currentAgeP11&&['正財','偏財','食神'].indexOf(sg)>=0;})||B.dayuns.find(function(dy){var sg=getTenGod(B.dayGanIdx,dy.ganIdx);return ['正財','偏財','食神'].indexOf(sg)>=0;});
+    if(wealthYun) html+='<p><span class="hl">財運高峰大運：</span>'+wealthYun.age+'～'+(wealthYun.age+10)+'歲（'+wealthYun.gan+wealthYun.zhi+'大運，'+getTenGod(B.dayGanIdx,wealthYun.ganIdx)+'），這段時期是財富積累的黃金期。</p>';
+    html+='<div class="tip">'+(B.isStrong?'把能量集中在最能發揮你強項的方向，你的爆發力需要聚焦才能最大化。':'找到讓你發揮的舞台和支持環境，借助貴人和合作的力量，往往比單打獨鬥走得更遠更快。')+'</div>';
+    html+='</div></div>';
+  }
+
+  // ── P12：健康提醒 ──
+  if(id==='p12') {
+    var wxOrder4=['木','火','土','金','水'];
+    var minWx4=wxOrder4.reduce(function(a,b){return B.wx[a]<B.wx[b]?a:b;});
+    var maxWx4=wxOrder4.reduce(function(a,b){return B.wx[a]>B.wx[b]?a:b;});
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十二</div>健康提醒</div><div class="sec-body">';
+    var healthMap={
+      木:{organ:'肝臟、膽、筋絡、眼睛',tip:'木氣旺容易肝火旺，情緒急躁最傷肝，建議多喝水、早睡、避免熬夜飲酒。'},
+      火:{organ:'心臟、小腸、血液循環',tip:'火氣旺容易心火上炎，失眠、口瘡、心悸是常見症狀，注意情緒管理。'},
+      土:{organ:'脾胃、消化系統、肌肉',tip:'土氣旺容易消化系統出問題，飲食規律、少油膩、注意體重。'},
+      金:{organ:'肺、大腸、皮膚、鼻子',tip:'金氣旺容易呼吸系統問題，注意空氣品質，多做深呼吸運動。'},
+      水:{organ:'腎臟、膀胱、骨骼、耳朵',tip:'水氣旺容易腎虛，注意保暖，避免過勞，充足休息。'}
+    };
+    html+='<p><span class="hl">最旺（'+maxWx4+'）對應器官：</span>'+healthMap[maxWx4].organ+'<br>'+healthMap[maxWx4].tip+'</p>';
+    html+='<p><span class="hl">最弱（'+minWx4+'）需補強：</span>'+healthMap[minWx4].organ+'<br>五行最弱的部分通常是身體最容易出問題的地方，定期做相關檢查。</p>';
+    html+='<p><span class="hl">日主'+(B.isStrong?'偏強':'偏弱')+'提醒：</span>'+(B.isStrong?'能量強容易過度燃燒，最需要的是「休息」和「放慢」，很多病都是撐出來的。':'能量偏弱，免疫力和恢復力較差，需更注重養生，不要透支，早睡早起最基本。')+'</p>';
+    var lyTenGodH=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    html+='<p><span class="hl">'+B.analYear+'年健康重點：</span>'+(['偏官(七殺)','傷官'].indexOf(lyTenGodH)>=0?'今年帶煞氣（'+lyTenGodH+'），身體容易出狀況，特別注意意外和慢性疾病，定期健檢。':['正印','偏印'].indexOf(lyTenGodH)>=0?'今年印星旺，精神壓力大，注意神經系統和睡眠品質。':'今年健康能量相對平穩，維持規律作息即可。')+'</p>';
+
+    // 各年齡段健康重點
+    var currentAge=B.analYear-B.y;
+    html+='<p><span class="hl">目前年齡（約'+currentAge+'歲）健康重點：</span>';
+    if(currentAge<35) html+='年輕期以預防為主，建立良好的生活習慣，避免熬夜和過度勞累。';
+    else if(currentAge<50) html+='中年期新陳代謝開始下降，需注意體重、血壓和心血管健康，定期健檢很重要。';
+    else html+='熟齡期重點在維持功能和預防退化，適度運動、補充鈣質、保持社交活動對健康很重要。';
+    html+='</p>';
+    html+='<div class="tip">最有效的養生（根據你的八字）：'+(B.dayWx==='木'?'早睡護肝、多吃綠色蔬菜、適合在大自然中運動':B.dayWx==='火'?'靜心冥想、避免過度興奮、補充降火食物（蓮子苦瓜）':B.dayWx==='土'?'飲食規律七分飽、少加工食品、適合散步等低衝擊運動':B.dayWx==='金'?'深呼吸運動、保持居家通風、補充白色食物（白木耳百合）':'充足睡眠第一，補腎食物（黑芝麻核桃），注意保暖特別是腰腎')+'</div>';
+    html+='</div></div>';
+  }
+
+  // ── P9：正緣出現時機 ──
+  if(id==='p9') {
+    var isMaleP9b=B.gender==='male';
+    var loveStar9=isMaleP9b?['正財','偏財']:['正官','偏官(七殺)'];
+    var peachZhi9=['子','午','卯','酉'];
+
+    // 找所有帶感情能量的大運
+    var loveYuns=[];
+    B.dayuns.forEach(function(dy){
+      var sg=getTenGod(B.dayGanIdx,dy.ganIdx);
+      var hasPeach=peachZhi9.indexOf(dy.zhi)>=0;
+      var hasLove=loveStar9.indexOf(sg)>=0;
+      if(hasLove||hasPeach){
+        loveYuns.push({age:dy.age,endAge:dy.age+10,gan:dy.gan,zhi:dy.zhi,shen:sg,hasPeach:hasPeach,hasLove:hasLove,score:(hasLove?2:0)+(hasPeach?1:0)});
+      }
+    });
+    loveYuns.sort(function(a,b){return b.score-a.score;});
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">九</div>正緣出現時機</div><div class="sec-body">';
+    html+='<p style="font-size:.78rem;color:var(--mist);margin-bottom:10px">※ 以下為命理推算，實際緣分需結合個人際遇，僅供參考。</p>';
+
+    // 今年感情能量
+    var lyTenGodL=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    var lyPeach9=peachZhi9.indexOf(B.liuNian.zhi)>=0;
+    var lyHasLove=loveStar9.indexOf(lyTenGodL)>=0;
+    html+='<div style="background:'+(lyHasLove||lyPeach9?'var(--jade-lt)':'var(--gold-pale)')+';border-radius:6px;padding:14px;margin-bottom:14px;">';
+    html+='<p style="font-weight:700;color:'+(lyHasLove||lyPeach9?'var(--jade)':'var(--gold)')+';">'+B.analYear+'年感情能量：'+(lyHasLove&&lyPeach9?'極旺 ✦✦✦':lyHasLove?'旺 ✦✦':lyPeach9?'中等 ✦':'平穩')+'</p>';
+    if(lyHasLove) html+='<p>今年流年帶'+(isMaleP9b?'財星':'官星')+'（'+lyTenGodL+'），'+(B.status==='單身'?'是遇到正緣的好時機，要主動創造相遇機會。':'感情有重大進展，適合推進承諾。')+'</p>';
+    if(lyPeach9) html+='<p>流年地支'+B.liuNian.zhi+'帶桃花，今年社交場合容易有意外緣分。</p>';
+    if(!lyHasLove&&!lyPeach9) html+='<p>今年感情能量較平，以深化現有關係或充實自己為主，緣分在你最放鬆的時候出現。</p>';
+    html+='</div>';
+
+    // 一生感情高峰期
+    html+='<p><span class="hl">一生感情高峰大運：</span></p>';
+    if(loveYuns.length>0){
+      loveYuns.slice(0,3).forEach(function(ly){
+        var currentAge=B.analYear-B.y;
+        var isPast=ly.endAge<currentAge;
+        var isCurrent=ly.age<=currentAge&&ly.endAge>currentAge;
+        html+='<div style="border-left:3px solid '+(isCurrent?'var(--gold)':isPast?'var(--mist)':'var(--jade)')+';padding:10px 14px;margin-bottom:8px;">';
+        html+='<p style="font-weight:700;color:'+(isCurrent?'var(--gold)':isPast?'var(--mist)':'var(--jade)')+'">'+ly.age+'～'+ly.endAge+'歲（'+ly.gan+ly.zhi+'大運）'+(isCurrent?' ← 現在':'')+(isPast?' ✓ 已過':'')+'</p>';
+        html+='<p style="font-size:.85rem">'+(ly.hasLove?'帶'+(isMaleP9b?'財星':'官星')+'（'+ly.shen+'），正緣能量強，這段時期遇到的感情通常較認真。':'')+(ly.hasPeach?(ly.hasLove?'加上':'')+'地支'+ly.zhi+'桃花旺，容易有感情機緣。':'')+'</p>';
+        html+='</div>';
+      });
+    } else {
+      html+='<p>正緣能量分散在各個時期，重要的是保持開放的心態，不刻意追求反而容易遇到。</p>';
+    }
+
+    // 感情來臨前的信號
+    html+='<p style="margin-top:12px"><span class="hl">正緣來臨前通常會出現這些信號：</span></p>';
+    html+='<p>① 你突然開始注重自己的形象和狀態，不是為了誰，就是莫名地想讓自己更好。</p>';
+    html+='<p>② 生活出現了一些小改變或新嘗試——新地方、新朋友、新習慣。</p>';
+    html+='<p>③ 你開始對過去的感情真正放下了，不再有遺憾或怨氣。</p>';
+    html+='<p>④ 身邊的人開始說「你最近狀態很好」。</p>';
+    html+='<div class="tip">命理給的是時間視窗，緣分的出現需要你走出去。在感情高峰期多參加活動、多認識新朋友，才能讓命盤的能量真正發揮。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P10：另一半完整分析 ──
+  if(id==='p10') {
+    var isMaleP10=B.gender==='male';
+    // 夫妻宮：日支
+    var spouseZhiIdx=B.dp.zhiIdx;
+    var spouseZhi=ZHI[spouseZhiIdx];
+    var spouseWx=ZHI_WX[spouseZhiIdx];
+    // 感情星
+    var loveStar10=isMaleP10?['正財','偏財']:['正官','偏官(七殺)'];
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">拾</div>另一半完整分析</div><div class="sec-body">';
+    html+='<p style="font-size:.78rem;color:var(--mist);margin-bottom:12px">※ 以下根據夫妻宮（日支）和感情星推算，為命理角度參考。</p>';
+
+    // 外貌分析
+    var appearanceMap={
+      子:{height:'中等偏高',build:'身材修長清瘦',face:'臉型較長或橢圓，眼神深邃，氣質偏文人書生型',skin:'膚色白皙或偏淡'},
+      丑:{height:'中等',build:'體型偏圓潤或壯實',face:'臉型圓潤，眉毛濃，看起來很有福氣',skin:'膚色偏暗或小麥色'},
+      寅:{height:'偏高',build:'身材高挑，四肢修長',face:'五官立體，眼神有神，有一種天生的氣場',skin:'膚色正常，氣色好'},
+      卯:{height:'中等偏矮或標準',build:'纖細、苗條',face:'五官精緻、臉型偏瓜子臉，有一種清秀的美感',skin:'膚色白皙'},
+      辰:{height:'中等',build:'體型偏壯，有肌肉感',face:'臉型方正或國字臉，看起來很穩重可靠',skin:'膚色偏暗或古銅色'},
+      巳:{height:'中等偏高',build:'身材勻稱、優雅',face:'臉型偏長，五官清晰，有一種精明的氣質',skin:'膚色較白或偏黃'},
+      午:{height:'偏高',build:'身材高挑，體型偏瘦長',face:'臉型偏長，眼神明亮有光，氣質熱情外向',skin:'膚色紅潤，氣色佳'},
+      未:{height:'中等',build:'身材適中，曲線感較明顯',face:'臉型橢圓，眉目清秀，有一種溫柔的感覺',skin:'膚色白中帶黃'},
+      申:{height:'中等偏高',build:'體型較壯，有力量感',face:'臉型偏方或圓，鼻子較挺，眼神銳利',skin:'膚色偏白或偏黃'},
+      酉:{height:'中等偏矮或標準',build:'身材精緻小巧',face:'五官精緻，臉型偏圓或瓜子，有一種精雕細琢的美',skin:'膚色白皙'},
+      戌:{height:'中等偏高',build:'體型偏壯或結實',face:'臉型偏方，眉毛較重，看起來正直有威嚴',skin:'膚色偏暗或健康古銅'},
+      亥:{height:'中等',build:'身材偏豐滿或圓潤',face:'臉型圓潤，眼神溫柔深邃，有一種神秘感',skin:'膚色白皙或偏淡'}
+    };
+    var ap=appearanceMap[spouseZhi];
+    html+='<div style="background:var(--gold-pale);border-radius:6px;padding:14px;margin-bottom:14px;">';
+    html+='<p style="font-weight:700;color:var(--gold);margin-bottom:8px;">外貌特徵（夫妻宮：日支'+spouseZhi+'）</p>';
+    html+='<p>🔸 身高：<strong>'+ap.height+'</strong></p>';
+    html+='<p>🔸 身材：<strong>'+ap.build+'</strong></p>';
+    html+='<p>🔸 臉部特徵：<strong>'+ap.face+'</strong></p>';
+    html+='<p>🔸 膚色：<strong>'+ap.skin+'</strong></p>';
+    html+='</div>';
+
+    // 個性分析
+    var personalityMap={
+      子:'個性聰明靈活，思維敏銳，有智慧但有時難以捉摸。和你在一起話題很多，但需要給他/她足夠的自主空間。',
+      丑:'個性踏實可靠，重視穩定和家庭，是那種讓你很有安全感的人。可能個性稍微固執，但出發點都是為了你們好。',
+      寅:'個性積極進取，有行動力和魄力，身邊的人都感受得到他/她的存在感。和你在一起會讓你覺得很有衝勁。',
+      卯:'個性溫和體貼，有藝術氣質，對美的事物很敏感。和你在一起氣氛很舒服，但決策上可能需要你多一點主導。',
+      辰:'個性沉穩踏實，有包容心，不容易被激怒。可能話不多，但一旦開口都很有份量，是那種越相處越有深度的人。',
+      巳:'個性聰明機智，有表達力，很會說話。和你在一起不會無聊，但需要注意有時候他/她太以自我為中心。',
+      午:'個性熱情直爽，說話直接，不玩心機。和你在一起很真實，但情緒起伏較大，需要一點包容。',
+      未:'個性溫柔細心，重視感情，有藝術氣質。和你在一起很甜蜜，但有時候優柔寡斷，需要你多做決定。',
+      申:'個性果斷能幹，有執行力，目標感很強。和你在一起會讓你覺得很有依靠，但可能有時候過於強勢。',
+      酉:'個性精細有品味，重視質感，對細節很敏感。和你在一起生活品質會提升，但可能有點挑剔，需要多點耐心。',
+      戌:'個性正直有義氣，重視原則，說到做到。和你在一起很有安全感，但有時候較固執，溝通需要耐心。',
+      亥:'個性深沉有深度，重視精神層面，有靈性。和你在一起有很多值得探索的層次，但有時候神秘難懂。'
+    };
+    html+='<div style="background:var(--jade-lt);border-radius:6px;padding:14px;margin-bottom:14px;">';
+    html+='<p style="font-weight:700;color:var(--jade);margin-bottom:8px;">個性特質</p>';
+    html+='<p>'+personalityMap[spouseZhi]+'</p>';
+    html+='</div>';
+
+    // 職業方向
+    var jobMap={
+      子:'與水相關的行業——科技、傳播、貿易、金融、心理諮詢類',
+      丑:'與土相關的行業——建築、農業、傳統製造、餐飲、房地產類',
+      寅:'與木相關的行業——教育、文化、創意設計、醫療、社工類',
+      卯:'與木相關的行業——藝術、文創、教育、美容、園藝相關類',
+      辰:'與土相關的行業——工程、建設、農業、傳統服務類',
+      巳:'與火相關的行業——媒體、表演、公關、銷售、科技類',
+      午:'與火相關的行業——媒體、娛樂、餐飲、銷售、軍警消類',
+      未:'與土相關的行業——藝術、設計、諮詢、教育、服務類',
+      申:'與金相關的行業——金融、法律、工程、機械、管理類',
+      酉:'與金相關的行業——珠寶、設計、金融、美容、精密工業類',
+      戌:'與土相關的行業——軍警、法律、房地產、傳統行業類',
+      亥:'與水相關的行業——藝術、靈性、傳播、旅遊、諮詢類'
+    };
+    html+='<p><span class="hl">職業方向：</span>'+jobMap[spouseZhi]+'</p>';
+
+    // 第一次相遇情境
+    var meetMap={
+      子:'初遇情境通常在：夜晚或傍晚的場合、和水有關的環境（海邊、河邊、游泳池附近）、網路上的相識、知識性或思考性的場合（書店、課程、講座）。',
+      丑:'初遇情境通常在：工作場合或職場環境、朋友介紹的聚會、傳統活動或家庭場合、需要穩定和規律的環境。',
+      寅:'初遇情境通常在：戶外活動或運動場合、充滿活力的社交環境、早晨或上午的時段、和大自然相關的場所。',
+      卯:'初遇情境通常在：藝文展覽或創意場合、朋友的聚會中、和美有關的場所（花店、咖啡廳、藝術空間）、春天的時節。',
+      辰:'初遇情境通常在：工作或事業相關場合、需要穩重和可靠感的環境、在一個需要互相合作的情境中自然發展。',
+      巳:'初遇情境通常在：熱鬧的社交場合、和科技或媒體有關的場所、夏天的時節、有表演或展示性質的活動。',
+      午:'初遇情境通常在：熱鬧的聚會或派對、戶外活動、夏天正中午的陽光下、充滿活力和激情的場合。',
+      未:'初遇情境通常在：朋友的小型聚會、藝術或文化活動、下午茶或輕鬆的社交場合、充滿溫馨感的地方。',
+      申:'初遇情境通常在：工作或商業場合、需要能力展示的環境、秋天的時節、正式或有組織的活動中。',
+      酉:'初遇情境通常在：品味場所（高級餐廳、藝廊、精品店附近）、需要細緻感知的場合、秋天的傍晚、和美感有關的活動。',
+      戌:'初遇情境通常在：朋友的聚會或共同的社交圈、需要義氣和信任的場合、秋末冬初的時節、有歷史感或傳統氛圍的地方。',
+      亥:'初遇情境通常在：靈性或文化活動、夜晚的場合、和藝術或心靈有關的環境、冬天或水邊的場所、網路的深度交流中。'
+    };
+    html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;margin-top:10px;">';
+    html+='<p style="font-weight:700;color:var(--jade);margin-bottom:8px;">✦ 第一次相遇的情境</p>';
+    html+='<p>'+meetMap[spouseZhi]+'</p>';
+    // 加入流年的相遇時間
+    html+='<p style="margin-top:8px;font-size:.85rem;color:var(--mist)">如果是在感情高峰大運期間，初遇的場合往往和你的用神（'+(B.isStrong?['洩','剋'][0]:['生','助'][0])+'身之神）所對應的環境有關。</p>';
+    html+='</div>';
+
+    html+='<div class="tip">這些特質是命盤能量所吸引的類型，不一定每個特點都完全符合，但整體方向通常很準。最重要的是，那個讓你感覺「對了」的感覺——相信它。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P13：子女宮 ──
+  if(id==='p13') {
+    var isMaleP9=B.gender==='male';
+    // 子女宮：時柱，無時柱看日支
+    var childPillar=B.hp||B.dp;
+    var childZhi=childPillar.zhi;
+    var childWx=ZHI_WX[childPillar.zhiIdx];
+    // 食傷代表子女
+    var shishen_child=isMaleP9?['食神','傷官']:['偏官(七殺)','正官'];
+    var childCount=0;
+    [B.yp,B.mp,B.dp,B.hp].forEach(function(p){
+      if(!p)return;
+      var sg=getTenGod(B.dayGanIdx,p.ganIdx);
+      if(shishen_child.indexOf(sg)>=0)childCount++;
+    });
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">玖</div>子女緣分析</div><div class="sec-body">';
+    html+='<p><span class="hl">子女緣強弱：</span>';
+    if(childCount>=2) html+='命盤中子女星（'+shishen_child.join('/')+'）出現多次，子女緣較深，通常會有子女，和子女的互動也較多。';
+    else if(childCount===1) html+='命盤子女星出現一次，子女緣適中，通常有機會擁有子女。';
+    else html+='命盤子女星較弱，子女緣需要後天努力或緣分配合，但並不代表沒有子女，只是緣分較輕。';
+    html+='</p>';
+
+    // 子女特質
+    html+='<p><span class="hl">子女特質（'+(B.hp?'時柱':'日支')+'）：</span>';
+    var childChar={
+      子:'子女通常聰明靈活，有智慧，思維敏銳，但有時較獨立不喜被管。',
+      丑:'子女通常踏實可靠，有責任感，但個性較固執，需要耐心引導。',
+      寅:'子女通常積極有衝勁，行動力強，有開創精神，但需要適度引導方向。',
+      卯:'子女通常溫和有藝術天賦，重視人際關係，容易受環境影響。',
+      辰:'子女通常沉穩，有包容心，思慮較深，發展較慢但穩健。',
+      巳:'子女通常聰明機智，表達力強，有表演欲，適合需要溝通的領域。',
+      午:'子女通常熱情直爽，行動力旺，但情緒起伏較大，需要情緒教育。',
+      未:'子女通常溫柔細心，有藝術氣質，重視家庭，但有時優柔寡斷。',
+      申:'子女通常果斷能幹，有執行力，適合競爭環境，但有時較自我。',
+      酉:'子女通常精細有品味，重視細節，適合藝術或技術類發展。',
+      戌:'子女通常正直有義氣，重視原則，但有時較固執難溝通。',
+      亥:'子女通常有深度，重視精神層面，靈性較高，適合哲學或藝術。'
+    };
+    html+=(childChar[childZhi]||'子女特質需進一步推算。')+'</p>';
+
+    // 適合生育時機（限定合理生育年齡 18～50 歲之間，且優先未來）
+    html+='<p><span class="hl">適合生育或與子女關係較佳的時期：</span>';
+    var currentAgeP13=B.analYear-B.y;
+    var childCandidates=B.dayuns.filter(function(dy){
+      var sg=getTenGod(B.dayGanIdx,dy.ganIdx);
+      var inRange=dy.age>=18&&dy.age<=50;
+      return inRange&&(shishen_child.indexOf(sg)>=0||['子','午','卯','酉'].indexOf(dy.zhi)>=0);
+    });
+    var goodChildYun=childCandidates.find(function(dy){return dy.age+10>currentAgeP13;})||childCandidates[0];
+    if(goodChildYun) {
+      var isPastChild=goodChildYun.age+10<=currentAgeP13;
+      html+=goodChildYun.age+'～'+(goodChildYun.age+10)+'歲（'+goodChildYun.gan+goodChildYun.zhi+'大運）子女緣較旺'+(isPastChild?'（此區間已過，僅供參考過去經歷）':'，這段時期與子女相關的事宜較順遂')+'。';
+    }
+    else html+='子女緣分散在各個階段，重要的是用心陪伴和引導，不特別集中在某個時期。';
+    html+='</p>';
+
+    html+='<div class="tip">無論命盤子女緣強弱，親子關係最重要的是陪伴品質而非數量，讓孩子感受到被看見和被接納，是最好的教育。</div>';
+    html+='<p style="font-size:.75rem;color:var(--mist);margin-top:8px">※ 子女宮分析為命理參考，不作為生育建議，實際情況請諮詢醫師。</p>';
+    html+='</div></div>';
+  }
+
+  // ── P14：父母兄弟宮 ──
+  if(id==='p14') {
+    // 父母宮：年柱（祖上/父母）、月柱（父母/兄弟）
+    var fatherShen=B.gender==='male'?['偏財']:['偏官(七殺)'];
+    var motherShen=B.gender==='male'?['正印','偏印']:['正印','偏印'];
+    var sibShen=['比肩','劫財'];
+
+    var fatherTG=getTenGod(B.dayGanIdx,B.yp.ganIdx);
+    var motherTG=getTenGod(B.dayGanIdx,B.mp.ganIdx);
+    var sibTG=getTenGod(B.dayGanIdx,B.mp.ganIdx);
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">拾</div>父母兄弟姊妹宮</div><div class="sec-body">';
+
+    // 與父親的緣分
+    html+='<p><span class="hl">與父親的緣分（年柱：'+B.yp.gan+B.yp.zhi+'）：</span>';
+    var ypShen=getTenGod(B.dayGanIdx,B.yp.ganIdx);
+    var fatherDesc={
+      '偏財':'與父親緣分深，父親通常是能幹開朗的人，對你有重要影響。',
+      '正財':'與父親關係穩定，父親踏實可靠，給你安全感。',
+      '正官':'父親重視規矩，對你管教較嚴，但出發點是希望你好。',
+      '偏官(七殺)':'父親個性強勢，早年關係可能有壓力，但也是你成長的動力。',
+      '正印':'父親溫和，給你精神上的支持和引導。',
+      '偏印':'父親有些神秘或不易親近，但關係有其深度。',
+      '比肩':'父親個性和你相似，關係如朋友，但有時容易有競爭感。',
+      '劫財':'與父親之間可能有財務或意見上的摩擦，需要溝通。',
+      '食神':'父親給你很多自由，重視你的才藝發展。',
+      '傷官':'與父親之間需要更多包容和理解，溝通是關鍵。'
+    };
+    html+=(fatherDesc[ypShen]||'與父親的關係需要進一步推算。')+'</p>';
+
+    // 與母親的緣分
+    html+='<p><span class="hl">與母親的緣分（月柱：'+B.mp.gan+B.mp.zhi+'）：</span>';
+    var mpShen=getTenGod(B.dayGanIdx,B.mp.ganIdx);
+    var motherDesc={
+      '正印':'與母親緣分深厚，母親溫和慈祥，給你很多精神支持和愛。',
+      '偏印':'母親個性獨特，給你很多靈性或創意方面的影響。',
+      '正官':'母親重視規矩，對你有明確的期待，關係較正式。',
+      '偏官(七殺)':'母親個性強，對你的要求高，雖有壓力但也是督促你成長的力量。',
+      '正財':'母親踏實務實，教你重視實際，理財觀念受她影響。',
+      '偏財':'母親活潑開朗，社交能力強，給你帶來豐富的生活體驗。',
+      '比肩':'與母親個性相似，關係像朋友，但有時意見相左。',
+      '劫財':'與母親之間需要磨合，有時在某些事上看法不同。',
+      '食神':'母親給你很多自由和支持，重視你的快樂和才藝。',
+      '傷官':'與母親之間的溝通需要更多耐心，彼此都需要多一點包容。'
+    };
+    html+=(motherDesc[mpShen]||'與母親的關係需進一步推算。')+'</p>';
+
+    // 兄弟姊妹
+    var sibCount=0;
+    [B.yp,B.mp,B.dp,B.hp].forEach(function(p){
+      if(!p)return;
+      var sg=getTenGod(B.dayGanIdx,p.ganIdx);
+      if(['比肩','劫財'].indexOf(sg)>=0)sibCount++;
+    });
+    html+='<p><span class="hl">兄弟姊妹緣分：</span>';
+    if(sibCount>=2) html+='命盤比劫旺，兄弟姊妹緣分深，手足關係重要，但也容易在財務或競爭上有摩擦，需要清楚界線。';
+    else if(sibCount===1) html+='兄弟姊妹緣分適中，手足關係平和，互相照顧。';
+    else html+='命盤比劫弱，與兄弟姊妹的緣分較淡，各自獨立發展，但感情不一定差。';
+    html+='</p>';
+
+    html+='<div class="tip">原生家庭的模式往往會在我們成年後的關係中重複出現。了解這些模式，不是為了追究責任，而是為了有意識地選擇不同的回應方式。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P15：遷移宮與貴人 ──
+  if(id==='p15') {
+    // 遷移宮看月支或年支
+    var moveZhi=B.yp.zhi;
+    var moveWx=ZHI_WX[B.yp.zhiIdx];
+    // 貴人星：正印、食神為貴人
+    var guirenShen=['正印','偏印','食神','正官'];
+    var guirenCount=0;
+    [B.yp,B.mp,B.dp,B.hp].forEach(function(p){
+      if(!p)return;
+      var sg=getTenGod(B.dayGanIdx,p.ganIdx);
+      if(guirenShen.indexOf(sg)>=0)guirenCount++;
+    });
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十一</div>遷移宮與貴人分析</div><div class="sec-body">';
+
+    // 適合遷移嗎
+    html+='<p><span class="hl">適合換環境或出外發展嗎：</span>';
+    var moveOk=['水','火'].indexOf(B.dayWx)>=0||['水','木'].indexOf(moveWx)>=0;
+    if(moveOk) html+='命盤顯示你適合出外發展，離開原本環境反而能開創新局，換城市或出國都可以考慮。';
+    else html+='命盤顯示你在熟悉的環境中發展較順，若要遷移，需要選對時機和方向，不宜衝動。';
+    html+='</p>';
+
+    // 適合遷移的方位
+    var directionMap={木:'東方或東南方',火:'南方',土:'中部或本地',金:'西方或西北方',水:'北方或東北方'};
+    html+='<p><span class="hl">對你最有利的方位：</span>'+directionMap[B.dayWx]+'。求職、搬家或出行時，往這個方向發展比較順。</p>';
+
+    // 貴人分析
+    html+='<p><span class="hl">命盤貴人緣：</span>';
+    if(guirenCount>=2) html+='貴人緣強，人生中容易得到他人幫助，尤其在低潮時往往有人出現拉你一把。';
+    else if(guirenCount===1) html+='貴人緣適中，在重要關頭會有貴人出現，但需要你先展現誠意和努力。';
+    else html+='命盤貴人星較少，需要主動出擊創造機會，靠自己的力量多過靠他人。';
+    html+='</p>';
+
+    // 貴人特質
+    html+='<p><span class="hl">你的貴人通常是什麼樣的人：</span>';
+    var guirenChar={
+      木:'從事教育、文化、創意類的人，或比你年輕有活力的人。',
+      火:'社交能力強、在公眾領域有影響力的人，或熱情外向的女性。',
+      土:'踏實穩重、在傳統行業有根基的人，或年長的長輩。',
+      金:'在金融、法律、工程領域有成就的人，或果斷有能力的人。',
+      水:'從事傳播、諮詢、科技類的人，或聰明靈活的人。'
+    };
+    html+=guirenChar[B.dayWx]+'</p>';
+
+    // 今年貴人運
+    var lyTenGodG=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    html+='<p><span class="hl">'+B.analYear+'年貴人運：</span>';
+    if(['正印','偏印'].indexOf(lyTenGodG)>=0) html+='今年帶印星（'+lyTenGodG+'），貴人運極旺，有長輩或有能力的人主動幫助你，要懂得感謝和把握。';
+    else if(['食神','正官'].indexOf(lyTenGodG)>=0) html+='今年帶'+lyTenGodG+'，間接貴人運不錯，透過人脈和口碑帶動機會。';
+    else html+='今年貴人運較平，靠自己的努力和主動積累更重要。';
+    html+='</p>';
+
+    html+='<div class="tip">吸引貴人最好的方式：先成為別人的貴人。你幫助別人的能量，會以倍數回到你身上，這不是迷信，而是人際關係最真實的運作規律。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P16：官祿考試宮 ──
+  if(id==='p16') {
+    // 官祿宮：看正官偏官
+    var officeShen=['正官','偏官(七殺)'];
+    var officeCount=0;
+    [B.yp,B.mp,B.dp,B.hp].forEach(function(p){
+      if(!p)return;
+      if(officeShen.indexOf(getTenGod(B.dayGanIdx,p.ganIdx))>=0)officeCount++;
+    });
+    var lyTenGodO=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十二</div>官祿宮｜考試升官</div><div class="sec-body">';
+
+    html+='<p><span class="hl">官職升遷運：</span>';
+    if(officeCount>=2) html+='命盤官星旺盛，天生適合體制內發展，升官運佳，適合公職、大企業或管理職。';
+    else if(officeCount===1) html+='官星適中，在體制內有穩定的發展機會，踏實努力會有晉升機會。';
+    else html+='官星較弱，不適合依賴體制升遷，自行創業或技術類發展更適合你。';
+    html+='</p>';
+
+    html+='<p><span class="hl">考試運：</span>';
+    var examOk=['正印','偏印','食神'].indexOf(getTenGod(B.dayGanIdx,B.mp.ganIdx))>=0;
+    html+=(examOk?'月柱帶印星或食神，學習能力強，考試運佳，適合通過考試取得資格認證。':'月柱官殺或比劫旺，考試需要更多準備和努力，但不代表考不過，只是要更用心準備。')+'</p>';
+
+    // 今年升遷/考試運
+    html+='<p><span class="hl">'+B.analYear+'年官祿運：</span>';
+    if(['正官','偏官(七殺)'].indexOf(lyTenGodO)>=0) html+='今年帶官星（'+lyTenGodO+'），升遷考試運旺，適合積極爭取晉升機會或報考重要資格。';
+    else if(['正印','偏印'].indexOf(lyTenGodO)>=0) html+='今年帶印星，學習進修運強，適合考取證照或進修學歷，為未來升遷鋪路。';
+    else html+='今年官祿運平穩，把現有工作做好，積累實力，時機到了自然有機會。';
+    html+='</p>';
+
+    // 適合的大運時機
+    var currentAgeP16=B.analYear-B.y;
+    var officeYun=B.dayuns.find(function(dy){return dy.age+10>currentAgeP16&&officeShen.indexOf(getTenGod(B.dayGanIdx,dy.ganIdx))>=0;})||B.dayuns.find(function(dy){return officeShen.indexOf(getTenGod(B.dayGanIdx,dy.ganIdx))>=0;});
+    if(officeYun) {
+      var isPastOffice=officeYun.age+10<=currentAgeP16;
+      html+='<p><span class="hl">事業高峰大運：</span>'+officeYun.age+'～'+(officeYun.age+10)+'歲（'+officeYun.gan+officeYun.zhi+'大運）'+(isPastOffice?'。這段時期曾經或應該較容易得到升遷或重要事業機會，若已錯過，接下來把握下一個轉折點即可。':'，這段時期最容易得到升遷或重要事業機會。')+'</p>';
+    }
+
+    html+='<div class="tip">考試和升遷最重要的準備：不只是技術能力，還有人際關係和時機掌握。在對的時間、對的地方展現自己的能力，比純粹埋頭苦幹更有效。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P17：劫數與化解 ──
+  if(id==='p17') {
+    // 凶星：七殺、傷官在命盤中的位置
+    var shaShen=['偏官(七殺)','傷官','劫財'];
+    var shaYears=[];
+    B.dayuns.forEach(function(dy){
+      var sg=getTenGod(B.dayGanIdx,dy.ganIdx);
+      if(shaShen.indexOf(sg)>=0) shaYears.push({age:dy.age,gan:dy.gan,zhi:dy.zhi,shen:sg});
+    });
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十三</div>劫數與化解之道</div><div class="sec-body">';
+    html+='<p style="font-size:.78rem;color:var(--mist);margin-bottom:10px">※ 命理劫數為警示參考，不代表必然發生，自身的努力和心態是最好的化解方式。</p>';
+
+    // 命盤中的壓力點
+    html+='<p><span class="hl">命盤需注意的能量：</span>';
+    var shaInChart=[];
+    [B.yp,B.mp,B.dp,B.hp].forEach(function(p,i){
+      if(!p)return;
+      var sg=getTenGod(B.dayGanIdx,p.ganIdx);
+      if(shaShen.indexOf(sg)>=0) shaInChart.push({pillar:['年柱','月柱','日柱','時柱'][i],shen:sg,zhi:p.zhi});
+    });
+    if(shaInChart.length===0) html+='命盤整體較為平和，沒有明顯的凶星壓制，是相對順遂的命格。';
+    else {
+      shaInChart.forEach(function(s){
+        var shaDesc={
+          '偏官(七殺)':'七殺在'+s.pillar+'，代表人生中會面臨較多競爭和壓力，但化解得當反而能成就大事。',
+          '傷官':'傷官在'+s.pillar+'，代表容易得罪人或在感情/工作上有波折，需注意言行。',
+          '劫財':'劫財在'+s.pillar+'，代表財務容易有耗損，或因他人而有損失，需注意合夥和借貸。'
+        };
+        html+='<p>'+(shaDesc[s.shen]||s.shen+'在'+s.pillar)+'</p>';
+      });
+    }
+
+    // 大運中的關卡
+    if(shaYears.length>0) {
+      html+='<p><span class="hl">需要特別留意的大運時期：</span></p>';
+      shaYears.slice(0,3).forEach(function(sy){
+        var desc={
+          '偏官(七殺)':sy.age+'～'+(sy.age+10)+'歲（七殺運）：這段時期競爭壓力大，容易面臨挑戰，但也是快速成長的機會。注意健康和人際關係。',
+          '傷官':sy.age+'～'+(sy.age+10)+'歲（傷官運）：這段時期容易得罪人或有感情波折，需要注意言行，女命要特別注意婚姻關係。',
+          '劫財':sy.age+'～'+(sy.age+10)+'歲（劫財運）：這段時期財務容易有起伏，避免衝動投資，注意財務安全。'
+        };
+        html+='<p>'+(desc[sy.shen]||'')+'</p>';
+      });
+    }
+
+    // 化解之道
+    html+='<p><span class="hl">化解方式：</span></p>';
+    html+='<p>① 心態是最大的化解——遇到壓力時不逃避，直接面對，挺過去之後往往是人生的轉折點。</p>';
+    html+='<p>② 多行善積德——幫助他人是化解煞氣最實際的方式，不是迷信，而是在建立人際資本。</p>';
+    html+='<p>③ 保持健康——大多數的劫數都和壓力過大有關，身體好才能有力氣應對挑戰。</p>';
+    html+='<p>④ 五行補充——'+(B.wx['木']<1?'補木：多接觸綠色植物、往東方發展':B.wx['火']<1?'補火：多曬太陽、穿暖色系':B.wx['土']<1?'補土：多接觸大地、黃色系':B.wx['金']<1?'補金：白色系、西方位置':B.wx['水']<1?'補水：多喝水、藍色系、北方位置':'五行相對平衡，保持現有的生活節奏')+'</p>';
+    html+='<div class="tip">命理中的劫數不是詛咒，而是提醒。知道了就能提前準備，讓可能的傷害降到最低。最好的化解是：在平靜的時候就把根紮穩，風浪來臨時自然安然無恙。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P18：前世因緣 ──
+  if(id==='p18') {
+    // 根據日柱、年柱、月柱推算靈魂課題
+    var dayGanIdx=B.dayGanIdx;
+    var dayZhiIdx=B.dp.zhiIdx;
+    var yearZhiIdx=B.yp.zhiIdx;
+
+    // 前世身份（根據日支推算）
+    var pastLifeRole={
+      子:'前世很可能是一位學者、謀士或在水邊生活的人。你的靈魂帶來了深度的智慧和對知識的渴望，但也帶來了一種「總是在思考，卻難以行動」的課題。',
+      丑:'前世很可能是農夫、工匠或土地的守護者。你的靈魂帶來了踏實和耐力，但也帶來了「容易固守舊有方式，難以接受改變」的課題。',
+      寅:'前世很可能是武將、獵人或探險家。你的靈魂帶來了勇氣和行動力，但也帶來了「衝動之後需要承擔後果」的課題。',
+      卯:'前世很可能是藝術家、詩人或宮廷中的文人。你的靈魂帶來了對美的敏感和表達的天賦，但也帶來了「太在意他人眼光」的課題。',
+      辰:'前世很可能是地方官員、保護者或龍的守護者。你的靈魂帶來了穩重和包容，但也帶來了「太想掌控一切」的課題。',
+      巳:'前世很可能是智者、預言者或宮廷謀士。你的靈魂帶來了敏銳的洞察力，但也帶來了「知道太多卻說不出口」的課題。',
+      午:'前世很可能是將軍、領袖或光明的使者。你的靈魂帶來了熱情和感染力，但也帶來了「情緒過於激烈，容易傷到自己和別人」的課題。',
+      未:'前世很可能是治療者、藝術家或草原上的牧人。你的靈魂帶來了溫柔和療癒能力，但也帶來了「付出太多卻忘了照顧自己」的課題。',
+      申:'前世很可能是工匠大師、商人或山中的修行者。你的靈魂帶來了技藝和執行力，但也帶來了「太過自我，難以接受他人幫助」的課題。',
+      酉:'前世很可能是工藝大師、廟宇守護者或宮廷樂師。你的靈魂帶來了對完美的追求，但也帶來了「標準太高，容易失望」的課題。',
+      戌:'前世很可能是守衛者、士兵或部落的守護者。你的靈魂帶來了忠誠和正義感，但也帶來了「太執著於自己認為對的事」的課題。',
+      亥:'前世很可能是道士、靈性修行者或海上航行者。你的靈魂帶來了靈性的深度和對未知的好奇，但也帶來了「活在自己的精神世界，與現實脫節」的課題。'
+    };
+
+    // 今生因緣（根據年支）
+    var thisLifeKarma={
+      子:'今生的核心因緣是「智慧的傳承」——你這輩子遇到的重要人，都是來幫你或需要你幫助他們找到方向的靈魂。',
+      丑:'今生的核心因緣是「踏實的回報」——你這輩子遇到的重要人，都是和你有過去世的信義之交，這輩子以不同的形式重逢。',
+      寅:'今生的核心因緣是「勇氣的試煉」——你這輩子最重要的關係，都是來考驗你是否真的勇敢做自己的靈魂。',
+      卯:'今生的核心因緣是「美的連結」——你這輩子的重要緣分，往往從共同欣賞某件事物開始，是靈魂層面的共鳴。',
+      辰:'今生的核心因緣是「守護與被守護」——你這輩子遇到的重要人，不是來保護你，就是需要你保護的。',
+      巳:'今生的核心因緣是「智慧的傳授」——你這輩子的重要關係，帶著強烈的師徒或知音的色彩。',
+      午:'今生的核心因緣是「光的照耀」——你這輩子的重要緣分，都是被你的光吸引來的，或來提醒你不要燃燒過度的。',
+      未:'今生的核心因緣是「愛與被愛的功課」——你這輩子最重要的課題，就是學會在給予的同時，也接受被愛。',
+      申:'今生的核心因緣是「能力的展現」——你這輩子遇到的重要人，要麼是來欣賞你才能的，要麼是來激發你潛力的。',
+      酉:'今生的核心因緣是「完美的追求與放下」——你這輩子最重要的關係，往往讓你看見自己對完美的執著，然後慢慢學會放下。',
+      戌:'今生的核心因緣是「忠誠的試煉」——你這輩子遇到的重要人，往往在考驗你的忠誠和原則，或是被你的忠誠所感動。',
+      亥:'今生的核心因緣是「靈魂的歸屬」——你這輩子最深的緣分，都帶著一種「好像在哪裡見過你」的熟悉感。'
+    };
+
+    // 靈魂課題（根據日主五行和強弱）
+    var soulLesson={
+      木:{lesson:'這輩子你的靈魂功課是「學會彎腰」——不是軟弱，而是學會在堅持與包容之間找到平衡。你的靈魂太習慣筆直向上，但有時候需要學會繞道而行。',gift:'你帶來的天賦是「生生不息的生命力」——不管跌倒幾次，你都能重新站起來。這是你靈魂最核心的力量。'},
+      火:{lesson:'這輩子你的靈魂功課是「學會保存能量」——你的靈魂帶著太陽般的熱情，但火太旺會燃盡自己。學會適時收斂，才能持續發光。',gift:'你帶來的天賦是「點燃他人的能力」——你走到哪裡，哪裡就會亮起來。很多人因為你而改變了生命的方向。'},
+      土:{lesson:'這輩子你的靈魂功課是「學會流動」——你的靈魂習慣穩固和不變，但這輩子需要學會在穩定中也能接受改變，讓能量流動起來。',gift:'你帶來的天賦是「讓人安心的力量」——你的存在本身就是一種穩定的能量，身邊的人在你旁邊會感到踏實。'},
+      金:{lesson:'這輩子你的靈魂功課是「學會柔軟」——你的靈魂帶著強大的意志力和清晰的界線，但有時候太銳利反而傷到自己和別人。學會在剛強中帶一點柔軟。',gift:'你帶來的天賦是「看穿本質的眼光」——你能快速辨別真偽，這在這個世界是非常寶貴的能力。'},
+      水:{lesson:'這輩子你的靈魂功課是「學會信任」——你的靈魂太習慣用智慧分析一切，但有些事情需要你放下頭腦，用心去感受和信任。',gift:'你帶來的天賦是「智慧與洞察」——你能看見別人看不見的深度，這是你靈魂帶來的最珍貴的禮物。'}
+    };
+
+    var sl=soulLesson[B.dayWx];
+
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十八</div>前世因緣與靈魂課題</div><div class="sec-body">';
+    html+='<p style="font-size:.78rem;color:var(--mist);margin-bottom:12px">※ 前世因緣為命理創意詮釋，屬靈性參考內容，不具備客觀驗證能力。</p>';
+
+    html+='<div style="background:var(--gold-pale);border-radius:8px;padding:16px;margin-bottom:16px;">';
+    html+='<p style="font-family:\'Noto Serif TC\',serif;font-size:.9rem;font-weight:700;color:var(--gold);margin-bottom:8px;">前世身份（日支：'+B.dp.zhi+'）</p>';
+    html+='<p>'+pastLifeRole[B.dp.zhi]+'</p>';
+    html+='</div>';
+
+    html+='<div style="background:var(--jade-lt);border-radius:8px;padding:16px;margin-bottom:16px;">';
+    html+='<p style="font-family:\'Noto Serif TC\',serif;font-size:.9rem;font-weight:700;color:var(--jade);margin-bottom:8px;">今生因緣（年支：'+B.yp.zhi+'）</p>';
+    html+='<p>'+thisLifeKarma[B.yp.zhi]+'</p>';
+    html+='</div>';
+
+    html+='<p><span class="hl">靈魂課題（日主：'+B.dayGan+'，'+B.dayWx+'）</span></p>';
+    html+='<p>'+sl.lesson+'</p>';
+    html+='<p style="margin-top:8px"><span class="gold">靈魂天賦：</span>'+sl.gift+'</p>';
+
+    // 與誰有前世緣
+    var karmaWith={
+      子:'你和水型或北方出生的人，往往有強烈的前世緣，見面時有一種莫名的熟悉感。',
+      丑:'你和土型或踏實型的人，往往有前世的約定，這輩子重逢是為了完成某個未了的事。',
+      寅:'你和木型或有衝勁的人，往往有前世的義氣之交，這輩子重逢是為了互相激發潛力。',
+      卯:'你和藝術型或溫柔型的人，往往有前世的美麗緣分，這輩子重逢是為了共同創造美好。',
+      辰:'你和穩重型或土型的人，往往有前世的守護關係，這輩子重逢是為了再次守護彼此。',
+      巳:'你和聰明型或靈性類型的人，往往有前世的師徒緣，這輩子重逢是為了傳授和學習。',
+      午:'你和熱情型或火型的人，往往有前世的強烈緣分，見面時能量很強，可能是愛也可能是課題。',
+      未:'你和溫柔型或療癒型的人，往往有前世的愛的緣分，這輩子重逢是為了繼續那份溫柔的連結。',
+      申:'你和能幹型或金型的人，往往有前世的合作緣，這輩子重逢是為了共同完成某件重要的事。',
+      酉:'你和有品味或精緻型的人，往往有前世的欣賞緣，這輩子重逢是為了彼此看見對方的美好。',
+      戌:'你和正直型或有義氣的人，往往有前世的信義之交，這輩子重逢是為了驗證那份忠誠。',
+      亥:'你和靈性型或深沉型的人，往往有前世極深的靈魂緣，第一次見面就有強烈的「認識你」的感覺。'
+    };
+    html+='<div class="tip">前世緣分的提示：'+karmaWith[B.dp.zhi]+'當你遇到讓你有莫名熟悉感的人，不要輕易忽略那種感覺，那可能是靈魂在告訴你什麼。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P19：過去重大事件驗證 ──
+  if(id==='p19') {
+    var currentAge=B.analYear-B.y;
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十九</div>過去重大事件驗證</div><div class="sec-body">';
+    html+='<p style="font-size:.78rem;color:var(--mist);margin-bottom:12px">※ 根據大運流年推算，以下為命理可能對應的人生事件，請對照自身經歷驗證。</p>';
+
+    // 根據每個大運的十神，推算那段時期可能發生的事
+    var eventMap={
+      '比肩':'這段時期：你很可能遇到了一個和你個性很像、或有競爭關係的人。可能有創業的念頭，或開始追求獨立。人際上可能有朋友間的摩擦或競爭。',
+      '劫財':'這段時期：財務上可能有波動或損失，可能因朋友、合夥或感情而有金錢上的耗損。但同時行動力很強，可能做了一個很衝的決定。',
+      '食神':'這段時期：生活相對順遂，可能是你記憶中比較輕鬆快樂的一段時光。才藝有機會發揮，或在某個領域受到肯定。',
+      '傷官':'這段時期：你可能說了一些讓人際關係出現裂痕的話，或做了一個讓長輩不滿意的決定。感情可能有波折，或工作上有衝突。',
+      '偏財':'這段時期：偏財運旺，可能有意外之財或在某個機會上賺到錢。人際活躍，認識了很多新朋友。但錢可能來得快去得也快。',
+      '正財':'這段時期：收入趨於穩定，或開始在某個領域穩健發展。可能開始認真存錢、置產或建立財務基礎。',
+      '偏官(七殺)':'這段時期：壓力很大，可能遇到了強勢的上司或競爭者，或生活中出現了需要你去面對的挑戰。但這段時期也是你成長最快的時候。',
+      '正官':'這段時期：可能在工作上得到認可、升遷或取得某個資格。生活比較規律，重視責任和承諾。',
+      '偏印':'這段時期：可能對某個神秘或特殊的領域產生興趣，開始學習或研究。有時候懶散，容易拖延，但靈感豐富。',
+      '正印':'這段時期：學習運旺，可能考試順利或取得某個資格。有長輩或貴人幫助，生活相對有支撐。'
+    };
+
+    html+='<p style="margin-bottom:12px">以下是你的大運十神對應的人生事件，請對照看看是否相符：</p>';
+
+    B.dayuns.forEach(function(dy){
+      if(dy.age>=currentAge) return; // 只顯示已經過的大運
+      var sg=getTenGod(B.dayGanIdx,dy.ganIdx);
+      var endAge=Math.min(dy.age+10,currentAge);
+      var isPeak=(dy.age<=currentAge&&dy.age+10>currentAge-10);
+      html+='<div style="border-left:3px solid '+(isPeak?'var(--gold)':'var(--border)')+';padding:10px 14px;margin-bottom:10px;background:'+(isPeak?'var(--gold-pale)':'transparent')+';border-radius:0 4px 4px 0;">';
+      html+='<p style="font-weight:700;color:'+(isPeak?'var(--gold)':'var(--mist)')+'">'+dy.age+'～'+(dy.age+10)+'歲（'+dy.gan+dy.zhi+'，'+sg+'）</p>';
+      html+='<p style="font-size:.85rem;line-height:1.85">'+(eventMap[sg]||'這段時期帶來了新的能量和轉變。')+'</p>';
+      html+='</div>';
+    });
+
+    if(B.dayuns.filter(function(dy){return dy.age<currentAge;}).length===0){
+      html+='<p style="color:var(--mist)">目前還在第一個大運中，過去的事件需要更多資料才能精確推算。</p>';
+    }
+
+    // 流年重大事件（找過去幾個特別的流年）
+    html+='<p style="margin-top:16px"><span class="hl">特別留意的流年（過去）：</span></p>';
+    var notableYears=[];
+    for(var ty2=B.y+15;ty2<B.analYear;ty2++){
+      var lyG2=(ty2-4)%10; if(lyG2<0)lyG2+=10;
+      var lyZ2=(ty2-4)%12; if(lyZ2<0)lyZ2+=12;
+      var lyShen=getTenGod(B.dayGanIdx,lyG2);
+      var age2=ty2-B.y;
+      if(['偏官(七殺)','傷官','偏財','正財'].indexOf(lyShen)>=0&&age2<=currentAge){
+        notableYears.push({year:ty2,age:age2,gan:GAN[lyG2],zhi:ZHI[lyZ2],shen:lyShen});
+      }
+    }
+    // 只顯示最近幾個
+    notableYears.slice(-5).forEach(function(ny){
+      var desc={'偏官(七殺)':'壓力大、挑戰多，可能有健康或事業上的考驗。','傷官':'感情或工作有波折，說錯話或做了讓人意外的決定。','偏財':'財運有起伏，或遇到感情方面的重大事件（男命）。','正財':'財務有重要進展，或感情出現重要的人（男命）。'};
+      html+='<p><span class="gold">'+ny.year+'年（'+ny.age+'歲，'+ny.gan+ny.zhi+'，'+ny.shen+'）：</span>'+(desc[ny.shen]||'')+'</p>';
+    });
+
+    html+='<div class="tip">如果以上推算有幾個和你的實際經歷吻合，說明這個命盤的方向是準確的。對不上的部分，可能是因為當時的選擇改變了走向——命理是趨勢，不是絕對。</div>';
+    html+='</div></div>';
+  }
+
+  // ── P20：大運流年 ──
+  if(id==='p20') {
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十四</div>大運與流年</div>';
+    html+='<div class="sec-body">';
+    html+='<p>起運年齡：<span class="hl">'+B.startAge+'歲</span>　行運方向：<span class="hl">'+(B.shunxing?'順行':'逆行')+'</span></p>';
+    html+='</div>';
+    html+='<div class="dayun-row">';
+    B.dayuns.forEach(function(dy){
+      var wxG=GAN_WX[dy.ganIdx];
+      var wxZ=ZHI_WX[dy.zhiIdx];
+      var sg=getTenGod(B.dayGanIdx,dy.ganIdx);
+      var goodDy=['食神','正財','偏財','正官','正印'].indexOf(sg)>=0;
+      html+='<div class="dayun-item'+(dy.isCurrent?' current':'')+'" style="'+(goodDy?'border-color:var(--jade)':'')+'">'+
+        '<div class="dy-age">'+dy.age+'歲<br>'+dy.year+'年</div>'+
+        '<div class="dy-gan '+WX_COLOR[wxG]+'">'+dy.gan+'</div>'+
+        '<div class="dy-zhi '+WX_COLOR[wxZ]+'">'+dy.zhi+'</div>'+
+        '<div class="dy-shen" style="color:'+(goodDy?'var(--jade)':'var(--rust)')+'">'+sg+'</div>'+
+        '</div>';
+    });
+    html+='</div>';
+    if(B.currentDayun){
+      var cdShen=getTenGod(B.dayGanIdx,B.currentDayun.ganIdx);
+      var dayunDesc={'比肩':'比肩大運：展現個人能力、獨立發展的時期，競爭意識強。','劫財':'劫財大運：競爭激烈，財務需謹慎，行動力和競爭力旺盛。','食神':'食神大運：發揮才藝、享受生活的時期，感情財運順遂。','傷官':'傷官大運：才華顯現但容易得罪人，創造力超強但需注意人際。','偏財':'偏財大運：偏財運旺，善用人脈，財源廣進。','正財':'正財大運：正財穩定積累，適合踏實建設。','偏官(七殺)':'七殺大運：壓力大但成長快，化解煞氣能成就大事。','正官':'正官大運：適合體制內發展，有升遷晉職機會。','偏印':'偏印大運：靈感強，適合學習靜修，注意行動力。','正印':'正印大運：貴人運旺，有人幫助，學習能力強。'};
+      html+='<div class="sec-body"><p><span class="hl">當前大運（'+B.currentDayun.gan+B.currentDayun.zhi+'，約'+B.currentDayun.age+'～'+(B.currentDayun.age+10)+'歲）：</span></p>';
+      html+='<p>'+(dayunDesc[cdShen]||'這個大運帶來新的能量和挑戰。')+'</p></div>';
+    }
+    var lyTenGod2=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    var lyDesc={'比肩':'今年自我意識強，展現能力，保持開放心態。','劫財':'今年競爭激烈，財務謹慎，避免衝動。','食神':'今年才藝旺，工作順利，是好走的一年。','傷官':'今年創意爆發，注意言行，感情有波折。','偏財':'今年偏財多，人脈帶財，主動出擊。','正財':'今年正財穩，踏實努力有回報。','偏官(七殺)':'今年壓力大，保持健康和情緒穩定是關鍵。','正官':'今年適合體制內發展，有晉升機會。','偏印':'今年靈感豐富，適合學習，注意行動力。','正印':'今年貴人運旺，有人幫助，學習能力強。'};
+    html+='<div class="sec-body"><p><span class="hl">'+B.analYear+'年流年（'+B.liuNian.gan+B.liuNian.zhi+'，'+lyTenGod2+'）：</span>'+(lyDesc[lyTenGod2]||'今年平穩發展。')+'</p></div>';
+    html+='</div>';
+  }
+
+  // ── P21：流月分析 ──
+  if(id==='p21') {
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十五</div>'+B.analYear+'年流月詳解</div>';
+    html+='<div class="sec-body"><p>流年：<span class="hl">'+B.liuNian.gan+B.liuNian.zhi+'（'+getTenGod(B.dayGanIdx,B.liuNian.ganIdx)+'）</span></p>';
+    html+='<p style="font-size:.8rem;color:var(--mist)">流月干支從寅月（1月）起排，每月十神對照日主分析吉凶。</p></div>';
+
+    // 流月干支計算：流年干支 + 月份
+    var lyGan=B.liuNian.ganIdx;
+    var monthGanStart=[0,2,4,6,8][lyGan%5]; // 五虎遁
+    html+='<table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px">';
+    html+='<thead><tr style="background:var(--ink);color:var(--gold)"><th style="padding:7px 10px;text-align:left">月份</th><th style="padding:7px 10px">月干支</th><th style="padding:7px 10px">十神</th><th style="padding:7px 10px;text-align:left">重點提示</th></tr></thead><tbody>';
+
+    var monthTips={
+      '比肩':'展現自我，獨立行動，注意固執',
+      '劫財':'競爭激烈，財務謹慎，積極行動',
+      '食神':'才藝發揮，生活順遂，享受當下',
+      '傷官':'創意爆發，注意言行，感情留心',
+      '偏財':'偏財機會，人脈帶財，主動出擊',
+      '正財':'正財穩健，踏實努力，積累為主',
+      '偏官(七殺)':'壓力較大，注意健康，保持冷靜',
+      '正官':'規矩行事，晉升機會，表現時刻',
+      '偏印':'靈感豐富，學習進修，注意懶散',
+      '正印':'貴人出現，學習順利，貴人幫助'
+    };
+    var goodShen=['食神','正財','偏財','正官','正印'];
+
+    for(var mo=1;mo<=12;mo++){
+      // 月支：從寅(idx=2)開始，第m月對應 (2+m-1)%12
+      var mZhiIdx=(1+mo)%12;
+      var mGanIdx=(monthGanStart+(mo-1))%10;
+      var mShen=getTenGod(B.dayGanIdx,mGanIdx);
+      var isGood=goodShen.indexOf(mShen)>=0;
+      var rowBg=isGood?'background:var(--jade-lt)':'';
+      html+='<tr style="border-bottom:1px solid var(--border);'+rowBg+'">'+
+        '<td style="padding:7px 10px"><span class="mn">'+mo+'月</span></td>'+
+        '<td style="padding:7px 10px;text-align:center;font-family:\'Noto Serif TC\',serif;font-weight:700">'+
+        '<span class="'+WX_COLOR[GAN_WX[mGanIdx]]+'">'+GAN[mGanIdx]+'</span>'+
+        '<span class="'+WX_COLOR[ZHI_WX[mZhiIdx]]+'">'+ZHI[mZhiIdx]+'</span></td>'+
+        '<td style="padding:7px 10px;text-align:center;font-size:.78rem;color:'+(isGood?'var(--jade)':'var(--rust)')+'">'+mShen+'</td>'+
+        '<td style="padding:7px 10px;font-size:.8rem">'+(monthTips[mShen]||'平穩發展')+'</td>'+
+        '</tr>';
+    }
+    html+='</tbody></table>';
+
+    // 找好月和注意月
+    var goodMonths2=[],warnMonths2=[];
+    for(var m2=1;m2<=12;m2++){
+      var mg2=(monthGanStart+(m2-1))%10;
+      var ms2=getTenGod(B.dayGanIdx,mg2);
+      if(goodShen.indexOf(ms2)>=0) goodMonths2.push(m2);
+      else if(['偏官(七殺)','傷官','劫財'].indexOf(ms2)>=0) warnMonths2.push(m2);
+    }
+    html+='<div class="sec-body" style="margin-top:10px">';
+    if(goodMonths2.length) html+='<p><span class="hl">好運月份：'+goodMonths2.map(function(m){return m+'月';}).join('、')+'</span>——適合推進重要計畫、做重大決定。</p>';
+    if(warnMonths2.length) html+='<p><span class="warn">留意月份：'+warnMonths2.map(function(m){return m+'月';}).join('、')+'</span>——謹慎行事，避免衝動決策，保持健康。</p>';
+    html+='</div></div>';
+  }
+
+  // ── P22：合婚分析 ──
+  if(id==='p22') {
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十六</div>合婚分析</div><div class="sec-body">';
+    html+='<p style="font-size:.78rem;color:var(--mist);margin-bottom:12px">※ 輸入對方的出生年份，可以分析雙方八字五行的相生相剋關係。</p>';
+
+    // 合婚輸入區
+    html+='<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px;">';
+    html+='<div class="field" style="flex:1;min-width:120px"><label>對方出生年</label><input type="number" id="partner-year" placeholder="例：1985" style="width:100%;border:1px solid var(--border);background:var(--bg);padding:9px;border-radius:4px;font-size:.88rem"></div>';
+    html+='<div class="field" style="flex:1;min-width:100px"><label>對方出生月</label><input type="number" id="partner-month" placeholder="1-12" min="1" max="12" style="width:100%;border:1px solid var(--border);background:var(--bg);padding:9px;border-radius:4px;font-size:.88rem"></div>';
+    html+='<div class="field" style="flex:1;min-width:100px"><label>對方出生日</label><input type="number" id="partner-day" placeholder="1-31" min="1" max="31" style="width:100%;border:1px solid var(--border);background:var(--bg);padding:9px;border-radius:4px;font-size:.88rem"></div>';
+    html+='<button onclick="calcHeHun()" style="background:var(--jade);color:#fff;border:none;padding:10px 18px;border-radius:4px;cursor:pointer;font-size:.85rem;white-space:nowrap">分析合婚</button>';
+    html+='</div>';
+    html+='<div id="hehun-result"></div>';
+    html+='<div style="background:var(--gold-pale);border-radius:6px;padding:12px 14px;font-size:.84rem;line-height:1.9;">';
+    html+='<p><strong>合婚基本參考原則：</strong></p>';
+    html+='<p>• 五行相生：木生火、火生土、土生金、金生水、水生木——相生為吉，代表雙方能互相滋養。</p>';
+    html+='<p>• 五行相剋：木剋土、火剋金、土剋水、金剋木、水剋火——相剋不一定不好，關鍵在誰剋誰。</p>';
+    html+='<p>• 日主相同：個性相似，容易理解對方，但也容易在某些面向競爭。</p>';
+    html+='</div></div></div>';
+  }
+
+  // ── P23：人生走勢 ──
+  if(id==='p23') {
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十七</div>人生走勢與課題</div><div class="sec-body">';
+    html+='<p><span class="hl">人生整體格局：</span>'+(B.isStrong?'日主偏強，你的人生是「靠自己」的格局。早年可能走得辛苦，因為不太接受別人幫助，但中年後找到方向，往往能建立屬於自己的一片天。':'日主偏弱，你的人生是「借力使力」的格局。善用身邊的人和資源，找到對的支持系統，往往比獨自硬撐走得更遠。')+'</p>';
+    html+='<p><span class="hl">人生各階段走勢：</span></p>';
+    B.dayuns.slice(0,6).forEach(function(dy){
+      var sg=getTenGod(B.dayGanIdx,dy.ganIdx);
+      var goodYun=['食神','正財','偏財','正官','正印'].indexOf(sg)>=0;
+      html+='<p>'+(dy.isCurrent?'<span class="gold">▶ 現在：</span>':'')+'<span class="'+(goodYun?'hl':'warn')+'">'+dy.age+'～'+(dy.age+10)+'歲（'+dy.gan+dy.zhi+'，'+sg+'）</span>：'+(goodYun?'這段時期能量較順，適合積極發展，建立重要的人生基礎。':'這段時期有壓力和挑戰，是磨練意志力的時期，挺過去之後往往有大的突破。')+'</p>';
+    });
+    var lessonMap2={木:'你的人生最大課題是「學會在堅持自我的同時，也能接受他人的不同觀點。」你的直率和衝勁是優點，但學會圓融，你的影響力會更大。',火:'你的人生最大課題是「情緒管理和持續力。」你的熱情能感染別人，但熱度過後能不能繼續堅持，是你能走多遠的關鍵。',土:'你的人生最大課題是「在穩定和改變之間找到平衡。」你的踏實是寶貴的，但不要讓過度保守讓你錯失了更好的機會。',金:'你的人生最大課題是「學會柔軟和包容。」你的執行力和正義感很強，但在關係中學會退讓，往往能走得更遠。',水:'你的人生最大課題是「從想到做，把想法落地。」你的智慧和謀略是天賦，但如果只是想不去做，再好的機會也會溜走。'};
+    html+='<div class="tip">'+lessonMap2[B.dayWx]+'</div>';
+    html+='</div></div>';
+  }
+
+  // ── P24：綜合建議 ──
+  if(id==='p24') {
+    var wxOrder5=['木','火','土','金','水'];
+    var maxWx5=wxOrder5.reduce(function(a,b){return B.wx[a]>B.wx[b]?a:b;});
+    html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十八</div>綜合建議</div><div class="sec-body">';
+    html+='<p class="hl">給'+B.name+'的命盤總結：</p>';
+    html+='<p>日主'+B.dayGan+'（'+B.dayWx+'），'+(B.isStrong?'偏強格局，能量充足，關鍵在於選擇對的方向和學會適時放鬆。':'偏弱格局，需要借力，關鍵在於找到對的環境和支持，不要硬撐。')+'</p>';
+    html+='<p>命盤最旺五行：<span class="hl">'+maxWx5+'</span>，這是你天生最強的能量，事業和人際都應圍繞這個核心建立。</p>';
+    var lyTenGod3=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
+    html+='<p><span class="hl">'+B.analYear+'年最重要的三件事：</span></p>';
+    var suggestions=[
+      (B.isStrong?'把能量集中在最重要的一件事，你的爆發力需要聚焦才能最大化。':'找到能讓你發揮的環境和支持系統，今年不適合獨自單打獨鬥。'),
+      (['正財','偏財','食神'].indexOf(lyTenGod3)>=0?'今年財運有機會，主動出擊，不要等機會上門。':'今年財務宜穩健，不宜大額投資，先整理現有資源。'),
+      (B.status==='單身'?'感情方面，今年'+(['正財','偏財','正官','偏官(七殺)'].indexOf(lyTenGod3)>=0?'有動靜，多出門社交，機會在生活中。':'感情平穩，先充實自己，緣分自然來。'):'感情方面，用心維護現有感情，'+(['偏官(七殺)','傷官'].indexOf(lyTenGod3)>=0?'容易有摩擦，耐心溝通比爭輸贏重要。':'感情平穩，適合製造共同回憶。'))
+    ];
+    suggestions.forEach(function(s,i){html+='<p>'+['①','②','③'][i]+' '+s+'</p>';});
+    html+='<div class="tip">你的命盤最大的禮物是「'+(B.isStrong?B.dayWx+'氣旺，行動力和意志力超強，一旦找對方向很少有人擋得住。':B.dayWx+'氣雖弱，但這讓你更細膩、更懂得借力，往往能在關鍵時刻得到貴人幫助。')+'」好好珍惜和發揮這份天賦。</div>';
+    html+='</div></div>';
+  }
+
+  return html;
+}
+
+// ══════════════════════════════════════════════════════════
+// 合婚計算
+// ══════════════════════════════════════════════════════════
+function calcHeHun() {
+  var py = parseInt(document.getElementById('partner-year').value);
+  var pm = parseInt(document.getElementById('partner-month').value)||6;
+  var pd = parseInt(document.getElementById('partner-day').value)||15;
+  var el = document.getElementById('hehun-result');
+  if(!py||py<1900||py>2010){el.innerHTML='<p style="color:var(--rust)">請輸入正確的出生年份（1900-2010）</p>';return;}
+
+  var pYp = getYearPillar(py,pm,pd);
+  var pDp = getDayPillar(py,pm,pd);
+  var pWx = calcWuxing([pYp, getMonthPillar(py,pm,pd), pDp]);
+  var pDayWx = GAN_WX[pDp.ganIdx];
+
+  // 雙方日主五行關係
+  var myWx = BZ.dayWx;
+  var sheng = {木:'火',火:'土',土:'金',金:'水',水:'木'};
+  var ke = {木:'土',火:'金',土:'水',金:'木',水:'火'};
+
+  var rel='';
+  var score=0;
+  if(sheng[myWx]===pDayWx){rel='你的五行（'+myWx+'）生對方（'+pDayWx+'）';score=90;}
+  else if(sheng[pDayWx]===myWx){rel='對方五行（'+pDayWx+'）生你（'+myWx+'）';score=85;}
+  else if(myWx===pDayWx){rel='雙方五行相同（'+myWx+'+'+pDayWx+'）';score=75;}
+  else if(ke[myWx]===pDayWx){rel='你的五行（'+myWx+'）剋對方（'+pDayWx+'），你主導型';score=65;}
+  else if(ke[pDayWx]===myWx){rel='對方五行（'+pDayWx+'）剋你（'+myWx+'），對方主導型';score=60;}
+
+  // 年支合沖
+  var myZhi = BZ.yp.zhiIdx;
+  var pZhi = pYp.zhiIdx;
+  var zhiHe = [[0,7],[1,8],[2,9],[3,10],[4,11],[5,6]]; // 子丑合、寅亥合等六合
+  var zhiChong = Math.abs(myZhi-pZhi)===6; // 六沖
+  var isHe = zhiHe.some(function(pair){return (pair[0]===myZhi&&pair[1]===pZhi)||(pair[1]===myZhi&&pair[0]===pZhi);});
+
+  var color = score>=85?'var(--jade)':score>=70?'var(--gold)':'var(--rust)';
+  var grade = score>=85?'相當合適 ✦':score>=70?'基本合適':'需要磨合';
+
+  var html='<div style="background:var(--card);border:1.5px solid var(--border);border-radius:6px;padding:16px;margin-top:10px;">';
+  html+='<div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">';
+  html+='<div style="text-align:center"><div style="font-size:.7rem;color:var(--mist)">命主</div><div style="font-family:\'Noto Serif TC\',serif;font-size:1.4rem;font-weight:900;color:var(--gold)">'+BZ.dayGan+'</div><div style="font-size:.75rem;color:var(--mist)">'+myWx+'</div></div>';
+  html+='<div style="font-size:1.2rem;color:var(--mist)">×</div>';
+  html+='<div style="text-align:center"><div style="font-size:.7rem;color:var(--mist)">對方</div><div style="font-family:\'Noto Serif TC\',serif;font-size:1.4rem;font-weight:900;color:var(--jade)">'+pDp.gan+'</div><div style="font-size:.75rem;color:var(--mist)">'+pDayWx+'</div></div>';
+  html+='<div style="flex:1;text-align:right"><div style="font-size:2rem;font-weight:900;font-family:\'Noto Serif TC\',serif;color:'+color+'">'+score+'分</div><div style="font-size:.82rem;color:'+color+'">'+grade+'</div></div>';
+  html+='</div>';
+  html+='<p><span class="hl">五行關係：</span>'+rel+'</p>';
+
+  var relDesc={
+    90:'你的能量滋養對方，對方在你身邊會越來越好，你也會有成就感。這是最好的組合之一。',
+    85:'對方的能量滋養你，你在這段感情中會被照顧和支持，容易依賴對方，要保持自己的獨立性。',
+    75:'雙方個性相似，容易理解對方，但也容易在某些事上競爭或固執，需要彼此讓步。',
+    65:'你的個性容易主導這段關係，對方可能感到壓力，要注意給對方足夠的空間和尊重。',
+    60:'對方個性容易主導，你可能有時感到壓力，重要的是找到舒適的相處節奏。'
+  };
+  html+='<p>'+(relDesc[score]||'')+'</p>';
+
+  if(isHe) html+='<p><span class="hl">年支六合：</span>'+ZHI[myZhi]+'與'+ZHI[pZhi]+'相合，代表雙方有天然的親和力和默契，相處起來自然舒服。</p>';
+  if(zhiChong) html+='<p><span class="warn">年支六沖：</span>'+ZHI[myZhi]+'與'+ZHI[pZhi]+'相沖，雙方在某些根本觀念上可能有差異，需要更多包容和溝通。</p>';
+
+  html+='<p style="font-size:.75rem;color:var(--mist);margin-top:8px">※ 完整合婚需要雙方完整八字（含時辰）深入推算，此為簡化參考。感情最重要的還是雙方的心意和努力。</p>';
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════
+(function(){
+  var yearSel=document.getElementById('f-year');
+  for(var y=2005;y>=1930;y--){
+    var o=document.createElement('option');
+    o.value=y;o.textContent=y+'年';
+    yearSel.appendChild(o);
+  }
+  var daySel=document.getElementById('f-day');
+  for(var d=1;d<=31;d++){
+    var o2=document.createElement('option');
+    o2.value=d;o2.textContent=d+'日';
+    daySel.appendChild(o2);
+  }
+  var analSel=document.getElementById('f-anal-year');
+  var cy=new Date().getFullYear();
+  for(var ay=cy-1;ay<=cy+3;ay++){
+    var o3=document.createElement('option');
+    o3.value=ay;o3.textContent=ay+'年';
+    if(ay===cy)o3.selected=true;
+    analSel.appendChild(o3);
+  }
+})();
+
+// ══════════════════════════════════════════════════════════
+// 複製功能
+// ══════════════════════════════════════════════════════════
+function copyText(t){if(!t||!t.trim()){alert('請先起盤');return;}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){alert('已複製！');}).catch(function(){fbCopy(t);});}else{fbCopy(t);}}function fbCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');alert('已複製！');}catch(e){alert('請手動複製');}document.body.removeChild(ta);}function copyCurrentPage(){var p=document.querySelector('.page.on');if(!p){alert('請先起盤');return;}var h=p.querySelector('.sec-head');var b=p.querySelector('.sec-body')||p;var ti=h?h.textContent.trim():'';var bo=(b.innerText||b.textContent).trim();copyText(ti+'\n\n'+bo);}function copyAll(){if(!BZ){alert('請先起盤');return;}var arr=['八字命盤報告',BZ.name+'｜'+BZ.y+'/'+BZ.m+'/'+BZ.d,'日主：'+BZ.dayGan+'（'+BZ.dayWx+'）'+(BZ.isStrong?'偏強':'偏弱'),''];document.querySelectorAll('.page').forEach(function(p){var h=p.querySelector('.sec-head');var b=p.querySelector('.sec-body')||p;if(h&&b){arr.push(h.textContent.trim());arr.push((b.innerText||b.textContent).trim());arr.push('');}});copyText(arr.join('\n'));}
+</script>
+</body>
+</html>
