@@ -952,17 +952,31 @@ function genPage(id) {
     var fm=financeMap[B.dayWx];
     html+='<p><span class="hl">財運格局：</span>'+fm.wealth+'</p>';
     html+='<p><span class="hl">賺錢方式：</span>'+fm.earn+'</p>';
-    var careerMap={木:'教育、文化、出版、設計、農業、中醫、社工',火:'媒體、娛樂、公關、銷售、美容、餐飲、電子',土:'房地產、建築、農業、金融保險、傳統製造',金:'金融、法律、軍警、工程、機械、外貿、製造',水:'傳播、媒體、貿易、物流、諮詢、心理、IT科技'};
-    html+='<p><span class="hl">最適合的事業方向：</span>'+careerMap[maxWx3]+'</p>';
+    var careerDetailMap={
+      木:{industries:'教育、文化、出版、設計、農業、中醫、社工',reason:'木主生發、成長與創造，你適合站在「培育」或「開創」的位置——教別人東西、設計新的東西、或照顧成長中的事物（人、植物、專案）都很合適。',role:'在團隊中你適合扮演發想者或引路人的角色，不喜歡一成不變的流程性工作，需要有發揮創意和影響他人的空間。'},
+      火:{industries:'媒體、娛樂、公關、銷售、美容、餐飲、電子',reason:'火主熱情、展現與擴張，你適合站在「被看見」的位置——需要表達、社交、或直接面對客戶的工作最能發揮你的能量。',role:'在團隊中你適合扮演對外窗口或氣氛帶動者，能為團隊注入活力，但要留意過度燃燒導致情緒起伏影響工作品質。'},
+      土:{industries:'房地產、建築、農業、金融保險、傳統製造',reason:'土主穩固、承載與信用，你適合站在「打地基」的位置——需要長期經營、累積信任、或處理實體資產的工作最適合你。',role:'在團隊中你適合扮演可靠的執行者或後勤支柱，別人會因為你的穩定而放心把重要的事交給你，但要避免過度保守錯失轉型機會。'},
+      金:{industries:'金融、法律、軍警、工程、機械、外貿、製造',reason:'金主決斷、規則與精確，你適合站在「把關」的位置——需要邏輯判斷、執行紀律、或處理精密事務的工作最適合你。',role:'在團隊中你適合扮演決策者或品管者，做事有原則不含糊，但要留意過於剛硬的溝通方式可能造成人際摩擦。'},
+      水:{industries:'傳播、媒體、貿易、物流、諮詢、心理、IT科技',reason:'水主流動、智慧與變通，你適合站在「串連」的位置——需要跨領域整合、快速應變、或深度思考的工作最適合你。',role:'在團隊中你適合扮演策略規劃者或溝通橋樑，思路靈活能看到別人看不到的角度，但要留意想太多而拖延行動的傾向。'}
+    };
+    var cd3=careerDetailMap[maxWx3];
+    html+='<p><span class="hl">最適合的事業方向：</span>'+cd3.industries+'</p>';
+    html+='<p style="font-size:.85rem;margin-top:6px">'+cd3.reason+'</p>';
+    html+='<p style="font-size:.85rem;margin-top:4px"><span class="hl">你在團隊中的角色：</span>'+cd3.role+'</p>';
     var lyTenGodW=getTenGod(B.dayGanIdx,B.liuNian.ganIdx);
     var wealthTip=(['正財','偏財'].indexOf(lyTenGodW)>=0)?B.analYear+'年帶財星（'+lyTenGodW+'），財運積極，主動開拓收入最有效。':(['食神','傷官'].indexOf(lyTenGodW)>=0)?B.analYear+'年帶食傷，靠才華帶動收入，展示能力是今年財運關鍵。':B.analYear+'年財星不顯，守成規劃，不宜大額投資。';
     html+='<p><span class="hl">'+B.analYear+'年財運：</span>'+wealthTip+'</p>';
     html+='<p><span class="hl">適合合夥嗎：</span>'+(B.isStrong?'日主偏強，自我意識強，獨立發展或自己主導更適合，合夥容易有主導權之爭。':'日主偏弱，適合有互補的合夥人，借力使力往往效果更好。')+'</p>';
 
-    // 財運高峰年齡
+    // 財運高峰年齡（限制在合理的財富累積年齡：20歲以上）
     var currentAgeP11=B.analYear-B.y;
-    var wealthYun=B.dayuns.find(function(dy){var sg=getTenGod(B.dayGanIdx,dy.ganIdx);return dy.age+10>currentAgeP11&&['正財','偏財','食神'].indexOf(sg)>=0;})||B.dayuns.find(function(dy){var sg=getTenGod(B.dayGanIdx,dy.ganIdx);return ['正財','偏財','食神'].indexOf(sg)>=0;});
-    if(wealthYun) html+='<p><span class="hl">財運高峰大運：</span>'+wealthYun.age+'～'+(wealthYun.age+10)+'歲（'+wealthYun.gan+wealthYun.zhi+'大運，'+getTenGod(B.dayGanIdx,wealthYun.ganIdx)+'），這段時期是財富積累的黃金期。</p>';
+    var wealthYun=B.dayuns.find(function(dy){var sg=getTenGod(B.dayGanIdx,dy.ganIdx);return dy.age>=Math.max(20,currentAgeP11)&&['正財','偏財','食神'].indexOf(sg)>=0;})
+      ||B.dayuns.find(function(dy){var sg=getTenGod(B.dayGanIdx,dy.ganIdx);return dy.age>=20&&['正財','偏財','食神'].indexOf(sg)>=0;});
+    if(wealthYun){
+      html+='<p><span class="hl">財運高峰大運：</span>'+wealthYun.age+'～'+(wealthYun.age+10)+'歲（'+wealthYun.gan+wealthYun.zhi+'大運，'+getTenGod(B.dayGanIdx,wealthYun.ganIdx)+'），這段時期財運能量較旺，適合積極開拓收入或做重要的財務規劃。</p>';
+    } else {
+      html+='<p><span class="hl">財運高峰大運：</span>從目前（約'+currentAgeP11+'歲）往後看，命盤中沒有特別強的財星大運，代表你的財富不靠單一時機的爆發，而是靠長期穩健的累積，踏實理財、持續投入，反而是最適合你的財富之路。</p>';
+    }
     html+='<div class="tip">'+(B.isStrong?'把能量集中在最能發揮你強項的方向，你的爆發力需要聚焦才能最大化。':'找到讓你發揮的舞台和支持環境，借助貴人和合作的力量，往往比單打獨鬥走得更遠更快。')+'</div>';
     html+='</div></div>';
   }
@@ -1758,11 +1772,29 @@ function genPage(id) {
     html+='<div class="sec"><div class="sec-head"><div class="sec-icon">十七</div>人生走勢與課題</div><div class="sec-body">';
     html+='<p><span class="hl">人生整體格局：</span>'+(B.isStrong?'日主偏強，你的人生是「靠自己」的格局。早年可能走得辛苦，因為不太接受別人幫助，但中年後找到方向，往往能建立屬於自己的一片天。':'日主偏弱，你的人生是「借力使力」的格局。善用身邊的人和資源，找到對的支持系統，往往比獨自硬撐走得更遠。')+'</p>';
     html+='<p><span class="hl">人生各階段走勢：</span></p>';
-    B.dayuns.slice(0,6).forEach(function(dy){
+
+    // 依十神×年齡層（幼少年/成年）給出具體且不重複的描述
+    var currentAgeP23=B.analYear-B.y;
+    var shenStageDesc={
+      '比肩':{child:'這段時期個性開始展現獨立自主，在同儕中容易有主見，不喜歡被安排，需要學習與人合作分享。',adult:'這段時期自我意識強，適合展現個人能力、獨立發展，事業上可主動出擊，但人際關係需要多一份謙讓。'},
+      '劫財':{child:'這段時期物質慾望增加，或在家中手足間容易有較多比較和競爭，需要學習量入為出的觀念。',adult:'這段時期財務容易有波動或耗損，行動力強但容易衝動，重大決定前宜多方評估，避免因合夥或借貸而受損。'},
+      '食神':{child:'這段時期生活相對順遂快樂，才藝或興趣開始展現天分，是無憂無慮的成長階段。',adult:'這段時期生活順遂，才藝有發揮的舞台，工作和感情都相對和諧，是值得好好享受和累積的階段。'},
+      '傷官':{child:'這段時期個性直率敢言，可能因為表達方式直接而與師長家人有些摩擦，其實只是還在學習如何表達自己。',adult:'這段時期才華容易展現但也容易得罪人，需要留意言行分寸，感情或合作關係可能有波折，宜謹言慎行。'},
+      '偏財':{child:'這段時期家庭經濟或生活環境可能有變動，物質資源較活絡，人際接觸面廣。',adult:'這段時期偏財機會多，人脈帶來財源，社交活躍，但花費也大，需要建立理財紀律，避免財來財去留不住。'},
+      '正財':{child:'這段時期家庭生活較穩定，物質不虞匱乏，開始建立對金錢的初步概念。',adult:'這段時期收入趨於穩定，適合腳踏實地累積財富、建立長期的財務基礎，是適合置產或投資自己的階段。'},
+      '偏官(七殺)':{child:'這段時期健康或環境壓力較大，需要多留意身心狀況，家庭中也可能有較大的變動需要適應。',adult:'這段時期壓力大、挑戰多，可能面臨強勢的競爭者或突發狀況，但這也是成長最快的階段，挺過去往往帶來重大突破。'},
+      '正官':{child:'這段時期生活作息較規律，個性中重規矩守序的一面開始養成，容易在團體中獲得肯定。',adult:'這段時期適合在體制內穩健發展，工作上容易獲得認可或升遷機會，生活步調規律，重視責任與承諾。'},
+      '偏印':{child:'這段時期對特殊事物容易產生興趣，想像力豐富，學習上時而專注時而分心，是探索自我的階段。',adult:'這段時期容易對特定領域產生濃厚興趣並深入鑽研，但也可能顯得孤僻或懶散，建議找到明確方向後全心投入。'},
+      '正印':{child:'這段時期受到長輩較多照顧與關愛，成長環境相對穩定，學習運勢也不錯。',adult:'這段時期學習運旺，容易得到貴人或長輩的資源挹注，適合進修充電，為下一階段的發展做準備。'}
+    };
+    B.dayuns.slice(0,7).forEach(function(dy){
       var sg=getTenGod(B.dayGanIdx,dy.ganIdx);
       var goodYun=['食神','正財','偏財','正官','正印'].indexOf(sg)>=0;
-      html+='<p>'+(dy.isCurrent?'<span class="gold">▶ 現在：</span>':'')+'<span class="'+(goodYun?'hl':'warn')+'">'+dy.age+'～'+(dy.age+10)+'歲（'+dy.gan+dy.zhi+'，'+sg+'）</span>：'+(goodYun?'這段時期能量較順，適合積極發展，建立重要的人生基礎。':'這段時期有壓力和挑戰，是磨練意志力的時期，挺過去之後往往有大的突破。')+'</p>';
+      var stage=dy.age<18?'child':'adult';
+      var desc=(shenStageDesc[sg]&&shenStageDesc[sg][stage])||(goodYun?'這段時期能量較順，適合積極發展，建立重要的人生基礎。':'這段時期有壓力和挑戰，是磨練意志力的時期，挺過去之後往往有大的突破。');
+      html+='<p>'+(dy.isCurrent?'<span class="gold">▶ 現在：</span>':'')+'<span class="'+(goodYun?'hl':'warn')+'">'+dy.age+'～'+(dy.age+10)+'歲（'+dy.gan+dy.zhi+'，'+sg+'）</span>：'+desc+'</p>';
     });
+
     var lessonMap2={木:'你的人生最大課題是「學會在堅持自我的同時，也能接受他人的不同觀點。」你的直率和衝勁是優點，但學會圓融，你的影響力會更大。',火:'你的人生最大課題是「情緒管理和持續力。」你的熱情能感染別人，但熱度過後能不能繼續堅持，是你能走多遠的關鍵。',土:'你的人生最大課題是「在穩定和改變之間找到平衡。」你的踏實是寶貴的，但不要讓過度保守讓你錯失了更好的機會。',金:'你的人生最大課題是「學會柔軟和包容。」你的執行力和正義感很強，但在關係中學會退讓，往往能走得更遠。',水:'你的人生最大課題是「從想到做，把想法落地。」你的智慧和謀略是天賦，但如果只是想不去做，再好的機會也會溜走。'};
     html+='<div class="tip">'+lessonMap2[B.dayWx]+'</div>';
     html+='</div></div>';
