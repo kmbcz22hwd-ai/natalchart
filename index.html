@@ -588,6 +588,60 @@ function zhiHtml(p) {
   return '<span class="'+WX_COLOR[wx]+'">'+p.zhi+'</span>';
 }
 
+// ══════════════════════════════════════════════════════════
+// 另一半視覺化人物卡（抽象輪廓，非寫實臉孔）
+// ══════════════════════════════════════════════════════════
+var APPEARANCE_VISUAL={
+  子:{heightTier:2,buildTier:'slim',faceShape:'long',skinTone:'#f5e6d8',keyword:'書卷氣'},
+  丑:{heightTier:2,buildTier:'broad',faceShape:'round',skinTone:'#e8c9a0',keyword:'福氣感'},
+  寅:{heightTier:3,buildTier:'medium',faceShape:'oval',skinTone:'#f0dcc4',keyword:'氣場強'},
+  卯:{heightTier:1,buildTier:'slim',faceShape:'oval',skinTone:'#f7ebe0',keyword:'清秀感'},
+  辰:{heightTier:2,buildTier:'broad',faceShape:'square',skinTone:'#e0bc94',keyword:'穩重感'},
+  巳:{heightTier:2,buildTier:'medium',faceShape:'long',skinTone:'#f2e0c8',keyword:'精明感'},
+  午:{heightTier:3,buildTier:'slim',faceShape:'long',skinTone:'#f5d5b8',keyword:'熱情感'},
+  未:{heightTier:2,buildTier:'medium',faceShape:'oval',skinTone:'#f3e2cc',keyword:'溫柔感'},
+  申:{heightTier:2,buildTier:'broad',faceShape:'square',skinTone:'#eeddc0',keyword:'力量感'},
+  酉:{heightTier:1,buildTier:'slim',faceShape:'round',skinTone:'#f8ede2',keyword:'精緻感'},
+  戌:{heightTier:2,buildTier:'broad',faceShape:'square',skinTone:'#e2c19a',keyword:'威嚴感'},
+  亥:{heightTier:2,buildTier:'medium',faceShape:'round',skinTone:'#f6e8da',keyword:'神秘感'}
+};
+
+function genAppearanceSVG(zhi){
+  var v=APPEARANCE_VISUAL[zhi];
+  if(!v) return '';
+  // 身高比例：影響剪影整體高度
+  var hMap={1:150,2:175,3:200};
+  var silhouetteH=hMap[v.heightTier];
+  var scaleY=silhouetteH/200;
+  // 體型：影響肩寬與身形寬度
+  var buildMap={slim:0.82,medium:1,broad:1.2};
+  var wScale=buildMap[v.buildTier];
+  // 臉型路徑（簡化幾何臉型，非寫實五官）
+  var faceMap={
+    long:'M100,40 Q100,20 100,20 Q130,20 130,55 Q130,95 100,100 Q70,95 70,55 Q70,20 100,20',
+    round:'M100,30 Q140,30 140,65 Q140,100 100,100 Q60,100 60,65 Q60,30 100,30',
+    square:'M75,30 L125,30 Q135,30 135,60 L135,80 Q135,100 100,100 Q65,100 65,80 L65,60 Q65,30 75,30',
+    oval:'M100,25 Q135,25 133,60 Q131,100 100,100 Q69,100 67,60 Q65,25 100,25'
+  };
+  var facePath=faceMap[v.faceShape]||faceMap.oval;
+
+  var bodyW=60*wScale;
+  var svg='<svg viewBox="0 0 200 240" style="width:140px;height:168px;display:block;margin:0 auto;">';
+  // 頭部（臉型）
+  svg+='<g transform="translate(0,'+(10)+') scale('+scaleY+')">';
+  svg+='<path d="'+facePath+'" fill="'+v.skinTone+'" stroke="var(--gold)" stroke-width="2"/>';
+  // 簡化五官示意（不寫實，僅示意方向感）
+  svg+='<ellipse cx="82" cy="62" rx="4" ry="5" fill="#5a4632" opacity="0.6"/>';
+  svg+='<ellipse cx="118" cy="62" rx="4" ry="5" fill="#5a4632" opacity="0.6"/>';
+  svg+='<path d="M90,80 Q100,86 110,80" stroke="#8a6a4a" stroke-width="2" fill="none" opacity="0.5"/>';
+  svg+='</g>';
+  // 身形剪影（梯形肩身）
+  var bodyTop=100*scaleY+20;
+  svg+='<path d="M'+(100-bodyW/2)+','+(bodyTop+60)+' L'+(100-bodyW*0.7/2)+','+bodyTop+' L'+(100+bodyW*0.7/2)+','+bodyTop+' L'+(100+bodyW/2)+','+(bodyTop+60)+' L'+(100+bodyW/2*0.85)+',230 L'+(100-bodyW/2*0.85)+',230 Z" fill="var(--gold-lt)" stroke="var(--gold)" stroke-width="1.5" opacity="0.85"/>';
+  svg+='</svg>';
+  return svg;
+}
+
 function genPage(id) {
   var B = BZ;
   if(!B) return '';
@@ -1104,12 +1158,16 @@ function genPage(id) {
       亥:{height:'中等',build:'身材偏豐滿或圓潤',face:'臉型圓潤，眼神溫柔深邃，有一種神秘感',skin:'膚色白皙或偏淡'}
     };
     var ap=appearanceMap[spouseZhi];
-    html+='<div style="background:var(--gold-pale);border-radius:6px;padding:14px;margin-bottom:14px;">';
+    html+='<div style="background:var(--gold-pale);border-radius:6px;padding:14px;margin-bottom:14px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;">';
+    html+='<div style="flex-shrink:0;text-align:center;">'+genAppearanceSVG(spouseZhi)+'<div style="font-size:.72rem;color:var(--gold);margin-top:4px;font-weight:700;">'+(APPEARANCE_VISUAL[spouseZhi]?APPEARANCE_VISUAL[spouseZhi].keyword:'')+'</div></div>';
+    html+='<div style="flex:1;min-width:180px;">';
     html+='<p style="font-weight:700;color:var(--gold);margin-bottom:8px;">外貌特徵（夫妻宮：日支'+spouseZhi+'）</p>';
     html+='<p>🔸 身高：<strong>'+ap.height+'</strong></p>';
     html+='<p>🔸 身材：<strong>'+ap.build+'</strong></p>';
     html+='<p>🔸 臉部特徵：<strong>'+ap.face+'</strong></p>';
     html+='<p>🔸 膚色：<strong>'+ap.skin+'</strong></p>';
+    html+='</div>';
+    html+='<p style="font-size:.72rem;color:var(--mist);width:100%;margin-top:4px;">※ 圖像為抽象示意風格，用來呈現輪廓比例和氣質方向，並非具體真實長相。</p>';
     html+='</div>';
 
     // 個性分析
