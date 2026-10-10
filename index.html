@@ -320,7 +320,8 @@ function getMonthPillar(y, m, d) {
 
 function getDayPillar(y, m, d) {
   var date = new Date(y, m-1, d);
-  var diff = Math.round((date - DAY_BASE) / 86400000);
+  // 1900/1/1 為甲戌日（甲=index0，戌=index10），校正偏移量+10，經多組獨立查證日期驗證無誤
+  var diff = Math.round((date - DAY_BASE) / 86400000) + 10;
   var ganIdx = ((diff % 10) + 10) % 10;
   var zhiIdx = ((diff % 12) + 12) % 12;
   return {gan: GAN[ganIdx], zhi: ZHI[zhiIdx], ganIdx: ganIdx, zhiIdx: zhiIdx};
