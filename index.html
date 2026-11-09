@@ -190,6 +190,12 @@ header p{color:rgba(255,255,255,.4);font-size:.68rem;margin-top:2px;}
   <div class="field" style="margin-bottom:12px"><label>姓氏筆畫（只有字庫沒有該姓才需要填，康熙字典筆畫）</label><input type="number" id="n-sstroke" placeholder="一般不用填"></div>
   <button class="btn" onclick="runNaming()">✦ 開始取名分析</button>
 </div>
+<div class="card">
+  <div class="card-title">🔍 查筆畫／五行</div>
+  <p style="font-size:.8rem;color:var(--mist);margin-bottom:10px">輸入任何中文字（可一次輸入多個），看康熙筆畫與五行。字庫沒有的字，可以查漢典後自己填入，會記在這支瀏覽器，下次不用再填。</p>
+  <div style="display:flex;gap:8px"><input type="text" id="l-input" placeholder="例如：顯德" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem"><button class="btn" style="width:auto;padding:10px 18px" onclick="lookupChars()">查詢</button></div>
+  <div id="l-out" style="margin-top:12px"></div>
+</div>
 <div id="n-result-wrap" style="display:none">
   <div class="export-bar"><p>取名分析報告</p><div style="display:flex;gap:8px"><button class="ebtn" onclick="copyNaming()">📋 複製全部</button><button class="ebtn" onclick="window.print()">🖨 列印</button></div></div>
   <div id="n-result"></div>
@@ -2015,6 +2021,7 @@ var NAME_DB = {
   '霆':[15,'水','M','雷霆，氣魄果決'],'語':[14,'水','N','善於表達，溝通佳'],'詠':[12,'水','N','吟詠，才情文采'],
   '詩':[13,'水','F','詩意，氣質文雅'],'誠':[14,'水','N','誠信，真誠可靠'],'哲':[10,'水','M','明智，有智慧'],
   '嘉':[14,'水','N','美好，嘉許，喜慶'],'君':[7,'水','N','君子，品格端正'],'唯':[11,'水','N','獨一無二，專注'],
+  '顯':[23,'火','M','顯達，光明顯耀，有名望'],'賢':[15,'金','N','賢能，德才兼備'],
   // 擴充字庫
   '榮':[14,'木','N','繁榮昌盛，榮耀'],
   '樂':[15,'木','N','快樂，生活愉快'],
@@ -2368,6 +2375,55 @@ function applyExclude(){
   document.getElementById('n-picks').innerHTML=renderPicks();
 }
 
+// ── 自訂字庫（存在這支瀏覽器，下次還在）與查筆畫工具 ──
+var CUSTOM_CHARS = (function(){ try{ return JSON.parse(localStorage.getItem('mp_custom_chars')||'{}')||{}; }catch(e){ return {}; } })();
+function charInfo(c){
+  if(NAME_DB[c]) return NAME_DB[c];
+  var u=CUSTOM_CHARS[c];
+  return u ? [u[0],u[1],'N','（自行輸入）'] : null;
+}
+function setCustomChar(c, strokes, wx){
+  CUSTOM_CHARS[c]=[strokes,wx];
+  try{ localStorage.setItem('mp_custom_chars', JSON.stringify(CUSTOM_CHARS)); }catch(e){}
+}
+function lookupChars(){
+  var raw=(document.getElementById('l-input').value||'');
+  var chars=[], seen={};
+  raw.split('').forEach(function(c){ if(/[㐀-䶿一-鿿]/.test(c) && !seen[c]){ seen[c]=1; chars.push(c); } });
+  var out=document.getElementById('l-out');
+  if(!chars.length){ out.innerHTML='<p style="font-size:.85rem;color:#c0392b">請輸入中文字</p>'; return; }
+  var h='';
+  chars.slice(0,12).forEach(function(c){
+    var u=NAME_DB[c], cu=CUSTOM_CHARS[c];
+    h+='<div style="border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:8px">';
+    if(u){
+      h+='<div style="font-size:1.3rem;font-weight:700">'+c+'　<span style="font-size:.9rem;font-weight:400">'+u[0]+'畫　'+wxTag(u[1])+'</span></div><div style="font-size:.82rem;margin-top:4px">'+u[3]+'</div><div style="font-size:.75rem;color:var(--mist);margin-top:2px">來源：內建字庫（康熙筆畫）</div>';
+    } else if(cu){
+      h+='<div style="font-size:1.3rem;font-weight:700">'+c+'　<span style="font-size:.9rem;font-weight:400">'+cu[0]+'畫　'+wxTag(cu[1])+'</span></div><div style="font-size:.75rem;color:var(--mist);margin-top:2px">來源：你之前自己輸入的（存在這支瀏覽器）　<a href="#" onclick="removeCustomChar(\''+c+'\');return false" style="color:#c0392b">刪除</a></div>';
+    } else {
+      h+='<div style="font-size:1.3rem;font-weight:700">'+c+'　<span style="font-size:.85rem;font-weight:400;color:var(--mist)">字庫還沒有</span></div>';
+      h+='<div style="font-size:.82rem;margin:6px 0">1. 先到漢典查「康熙字典筆畫」：<a href="https://www.zdic.net/hans/'+encodeURIComponent(c)+'" target="_blank" rel="noopener" style="color:var(--jade)">查「'+c+'」</a><br>2. 再填入筆畫、選五行（可參考下方部首對照），按儲存：</div>';
+      h+='<input type="number" id="lk-str-'+c+'" placeholder="筆畫" style="width:70px;padding:6px"> <select id="lk-wx-'+c+'" style="padding:6px"><option value="">五行</option><option>木</option><option>火</option><option>土</option><option>金</option><option>水</option></select> <button class="ebtn" style="background:var(--ink);color:var(--gold);padding:7px 14px" onclick="saveLookup(\''+c+'\')">儲存</button>';
+    }
+    h+='</div>';
+  });
+  h+='<details style="font-size:.8rem;margin-top:6px"><summary style="cursor:pointer;color:var(--jade)">五行與筆畫怎麼判斷？（部首對照）</summary><div style="margin-top:6px;line-height:1.7">';
+  h+='<strong>五行（依部首與字義，通行分類）</strong><br>木：木、禾、艹（草）、竹、花草樹木類<br>火：火、日、心（忄）、光明、熱情類<br>土：土、山、石、宀、田、大地山岳類<br>金：金、玉、刀、貝、白、秋、珠寶金屬類<br>水：水（氵）、雨、口、言、魚、冰、流動水氣類<br>';
+  h+='<strong>康熙筆畫提醒（跟平常寫的不同）</strong><br>氵＝4畫、艹＝6畫、忄＝4畫、扌＝4畫、犭＝4畫、礻＝5畫、衤＝6畫、王（玉部）＝5畫、阝在左＝8畫、在右＝7畫、辶＝7畫、月（肉部）＝6畫。字用「繁體正字」數，才準。';
+  h+='</div></details>';
+  out.innerHTML=h;
+}
+function saveLookup(c){
+  var n=parseInt(document.getElementById('lk-str-'+c).value), x=document.getElementById('lk-wx-'+c).value;
+  if(!n||!x){ alert('請填筆畫並選五行'); return; }
+  setCustomChar(c,n,x); lookupChars();
+}
+function removeCustomChar(c){
+  delete CUSTOM_CHARS[c];
+  try{ localStorage.setItem('mp_custom_chars', JSON.stringify(CUSTOM_CHARS)); }catch(e){}
+  lookupChars();
+}
+
 function checkName(){
   if(!NAMEST){ alert('請先起盤'); return; }
   var raw=(document.getElementById('n-check').value||'').trim();
@@ -2382,9 +2438,9 @@ function checkName(){
     var chars=given.split('');
     if(chars.length<1||chars.length>2){ errs.push(nm); return; }
     chars.forEach(function(c){
-      if(NAME_DB[c]||NAMEST.manual[c]) return;
+      if(charInfo(c)) return;
       var sEl=document.getElementById('nc-str-'+c), xEl=document.getElementById('nc-wx-'+c);
-      if(sEl && xEl && parseInt(sEl.value) && xEl.value){ NAMEST.manual[c]=[parseInt(sEl.value),xEl.value,'N','（自行輸入）']; }
+      if(sEl && xEl && parseInt(sEl.value) && xEl.value){ setCustomChar(c,parseInt(sEl.value),xEl.value); }
       else if(unknown.indexOf(c)<0) unknown.push(c);
     });
     items.push({given:given, chars:chars});
@@ -2400,7 +2456,7 @@ function checkName(){
   }
   var ready=[];
   items.forEach(function(it){
-    var infos=it.chars.map(function(c){ return NAME_DB[c]||NAMEST.manual[c]; });
+    var infos=it.chars.map(function(c){ return charInfo(c); });
     if(infos.some(function(x){return !x;})) return;
     var w=wuge(NAMEST.sStroke, infos.map(function(x){return x[0];}));
     var wl=infos.map(function(x){return x[1];});
