@@ -186,6 +186,10 @@ header p{color:rgba(255,255,255,.4);font-size:.68rem;margin-top:2px;}
     <div class="field"><label>日</label><select id="n-day"></select></div>
     <div class="field"><label>時辰</label><select id="n-hour"></select></div>
   </div>
+  <div class="row2">
+    <div class="field"><label>指定想用的一個字（選填）</label><input type="text" id="n-fix" maxlength="1" placeholder="例如：宥"></div>
+    <div class="field"><label>這個字放在</label><select id="n-fixpos"><option value="any">第一或第二字都可</option><option value="first">名的第一字</option><option value="second">名的第二字</option></select></div>
+  </div>
   <div class="field" style="margin-bottom:12px"><label>我已經想好的名字（選填，可輸入多個，用逗號或換行分開，可含姓氏）</label><textarea id="n-mine" rows="2" placeholder="例如：宥辰，宸宇" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem;font-family:inherit"></textarea></div>
   <div class="field" style="margin-bottom:12px"><label>姓氏筆畫（只有字庫沒有該姓才需要填，康熙字典筆畫）</label><input type="number" id="n-sstroke" placeholder="一般不用填"></div>
   <button class="btn" onclick="runNaming()">✦ 開始取名分析</button>
@@ -2276,6 +2280,9 @@ function runNaming(){
   h+='<p>名字裡的字，五行以「'+core.yong+'」為主、「'+core.xi+'」為輔，避開「'+core.ji+'」字，會讓這個孩子的命盤更平衡。</p>';
   h+='</div></div>';
 
+  var fx=(document.getElementById('n-fix').value||'').trim().charAt(0);
+  NAMEST.fix=(/[\u3400-\u4dbf\u4e00-\u9fff]/.test(fx)?fx:'');
+  NAMEST.fixPos=document.getElementById('n-fixpos').value||'any';
   NAMEST.exclude=[]; NAMEST.batch=0;
   NAMEST.all=buildPicks(NAMEST.exclude);
   var picksHtml='<div class="sec"><div class="sec-head"><div class="sec-icon">名</div>推薦名字（'+sn+'＋名）</div><div class="sec-body"><div id="n-picks">'+renderPicks()+'</div></div></div>';
@@ -2312,6 +2319,26 @@ function runNaming(){
 // 產生推薦清單（依分數排序，同字、同筆畫組合有出現次數上限以增加多樣性）
 function buildPicks(exclude){
   var core=NAMEST.core, gender=NAMEST.gender, sStroke=NAMEST.sStroke;
+  if(NAMEST.fix){
+    var fx=NAMEST.fix, fi=charInfo(fx);
+    if(!fi) return [];
+    var partners=Object.keys(NAME_DB).concat(Object.keys(CUSTOM_CHARS)).filter(function(c,i,arr){ return arr.indexOf(c)===i && c!==fx && exclude.indexOf(c)<0; });
+    partners=partners.filter(function(c){ var e=charInfo(c); if(gender==='male' && e[2]==='F') return false; if(gender==='female' && e[2]==='M') return false; return true; });
+    var fc=[];
+    partners.forEach(function(b){
+      var B=charInfo(b);
+      if(NAMEST.fixPos!=='second'){
+        var w1=wuge(sStroke,[fi[0],B[0]]);
+        fc.push({name:fx+b, a:fx, b:b, w:w1, sc:scoreName(w1,[fi[1],B[1]],core)});
+      }
+      if(NAMEST.fixPos!=='first'){
+        var w2=wuge(sStroke,[B[0],fi[0]]);
+        fc.push({name:b+fx, a:b, b:fx, w:w2, sc:scoreName(w2,[B[1],fi[1]],core)});
+      }
+    });
+    fc.sort(function(p,q){ return q.sc-p.sc; });
+    return fc.filter(function(c){ return luckOf(c.w.ren)!=='凶' && luckOf(c.w.di)!=='凶' && luckOf(c.w.zong)!=='凶'; }).slice(0,112);
+  }
   var pool=[];
   Object.keys(NAME_DB).forEach(function(c){
     var e=NAME_DB[c];
@@ -2349,12 +2376,20 @@ function renderPicks(){
   S.batch=((S.batch%pages)+pages)%pages;
   var cur=all.slice(S.batch*per,S.batch*per+per);
   var h='';
+  if(S.fix){
+    var fi0=charInfo(S.fix);
+    if(!fi0){ h+='<p style="color:#c0392b;font-size:.85rem">字庫還沒有「'+S.fix+'」，請先到上方「查筆畫／五行」查詢並儲存，再回來套用。</p>'; }
+    else {
+      var cr=S.core, note=(fi0[1]===cr.yong)?'本身就是用神，很適合':(fi0[1]===cr.xi)?'是喜神，不錯':(fi0[1]===cr.ji)?'是忌神，建議搭配用神的字平衡，或考慮換字':'屬性中性';
+      h+='<p style="font-size:.85rem;background:var(--gold-pale);padding:8px 10px;border-radius:6px">指定用字：<strong>'+S.fix+'</strong>（'+fi0[0]+'畫，'+wxTag(fi0[1])+'，'+note+'）。以下是與它搭配的名字，依五行與五格排序。</p>';
+    }
+  }
   if(!total){
     h+='<p>字庫中找不到符合條件的組合，可以清除「不想用的字」，或用上方「檢查名字」自行試字。</p>';
   } else {
     h+='<p style="font-size:.8rem;color:var(--mist);margin-bottom:8px">已依「用神五行＋人格／地格／總格皆非凶＋三才配置」排序。性別：'+(S.gender==='male'?'男':'女')+'。第 '+(S.batch+1)+' / '+pages+' 批，共 '+total+' 組。</p>';
     cur.forEach(function(c,idx){
-      var A=NAME_DB[c.a], B=NAME_DB[c.b];
+      var A=charInfo(c.a), B=charInfo(c.b);
       h+='<div style="border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:8px">';
       h+='<div style="font-family:\'Noto Serif TC\',serif;font-size:1.2rem;font-weight:700;letter-spacing:.1em">'+(S.batch*per+idx+1)+'. '+sn+c.name+'　<span style="font-size:.8rem;font-weight:400;color:var(--mist)">'+wxTag(A[1])+wxTag(B[1])+'（'+A[0]+'畫＋'+B[0]+'畫）</span></div>';
       h+='<div style="font-size:.82rem;margin-top:4px">'+c.a+'：'+A[3]+'<br>'+c.b+'：'+B[3]+'</div>';
@@ -2363,11 +2398,21 @@ function renderPicks(){
     });
     h+='<button class="btn" onclick="nextPicks()">🔄 都不喜歡？換一批推薦</button>';
   }
+  h+='<div style="margin-top:12px"><label style="font-size:.82rem;color:var(--mist)">想用某個字，系統幫你搭配另一個字：</label>';
+  h+='<div style="display:flex;gap:6px;margin-top:6px"><input type="text" id="n-fix2" maxlength="1" value="'+(S.fix||'')+'" placeholder="想用的字" style="width:80px;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem"><select id="n-fixpos2" style="flex:1;padding:8px"><option value="any"'+(S.fixPos==='any'?' selected':'')+'>第一或第二字</option><option value="first"'+(S.fixPos==='first'?' selected':'')+'>放第一字</option><option value="second"'+(S.fixPos==='second'?' selected':'')+'>放第二字</option></select><button class="btn" style="width:auto;padding:10px 14px" onclick="applyFix()">搭配</button></div>'+(S.fix?'<a href="#" onclick="clearFix();return false" style="font-size:.8rem;color:var(--jade)">清除指定字，回到一般推薦</a>':'')+'</div>';
   h+='<div style="margin-top:12px"><label style="font-size:.82rem;color:var(--mist)">有不想用的字（例如不喜歡「宸」），輸入後會從推薦中排除：</label>';
   h+='<div style="display:flex;gap:8px;margin-top:6px"><input type="text" id="n-excl" value="'+S.exclude.join('')+'" placeholder="例如：宸鈺" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem"><button class="btn" style="width:auto;padding:10px 16px" onclick="applyExclude()">重新推薦</button></div></div>';
   h+='<div class="tip">天格由姓氏決定，無法調整，僅供參考；名字主要看人格、地格、總格。電腦只能篩選五行和筆畫。最後請你們大聲唸幾次，確認沒有不雅諧音、字義和長輩喜好，並到戶政事務所確認字可以登記。</div>';
   return h;
 }
+function applyFix(){
+  var v=(document.getElementById('n-fix2').value||'').trim().charAt(0);
+  NAMEST.fix=(/[\u3400-\u4dbf\u4e00-\u9fff]/.test(v)?v:'');
+  NAMEST.fixPos=document.getElementById('n-fixpos2').value||'any';
+  NAMEST.batch=0; NAMEST.all=buildPicks(NAMEST.exclude);
+  document.getElementById('n-picks').innerHTML=renderPicks();
+}
+function clearFix(){ NAMEST.fix=''; NAMEST.batch=0; NAMEST.all=buildPicks(NAMEST.exclude); document.getElementById('n-picks').innerHTML=renderPicks(); }
 function nextPicks(){ NAMEST.batch++; document.getElementById('n-picks').innerHTML=renderPicks(); }
 function applyExclude(){
   var v=(document.getElementById('n-excl').value||'').split('').filter(function(c){return c.trim();});
