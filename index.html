@@ -186,6 +186,7 @@ header p{color:rgba(255,255,255,.4);font-size:.68rem;margin-top:2px;}
     <div class="field"><label>日</label><select id="n-day"></select></div>
     <div class="field"><label>時辰</label><select id="n-hour"></select></div>
   </div>
+  <div class="field" style="margin-bottom:12px"><label>我已經想好的名字（選填，可輸入多個，用逗號或換行分開，可含姓氏）</label><textarea id="n-mine" rows="2" placeholder="例如：宥辰，宸宇" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem;font-family:inherit"></textarea></div>
   <div class="field" style="margin-bottom:12px"><label>姓氏筆畫（只有字庫沒有該姓才需要填，康熙字典筆畫）</label><input type="number" id="n-sstroke" placeholder="一般不用填"></div>
   <button class="btn" onclick="runNaming()">✦ 開始取名分析</button>
 </div>
@@ -2013,7 +2014,125 @@ var NAME_DB = {
   '霖':[16,'水','M','甘霖，及時雨，利人'],'雯':[12,'水','F','彩雲，美麗飄逸'],'雪':[11,'水','F','純潔，冰清玉潔'],
   '霆':[15,'水','M','雷霆，氣魄果決'],'語':[14,'水','N','善於表達，溝通佳'],'詠':[12,'水','N','吟詠，才情文采'],
   '詩':[13,'水','F','詩意，氣質文雅'],'誠':[14,'水','N','誠信，真誠可靠'],'哲':[10,'水','M','明智，有智慧'],
-  '嘉':[14,'水','N','美好，嘉許，喜慶'],'君':[7,'水','N','君子，品格端正'],'唯':[11,'水','N','獨一無二，專注']
+  '嘉':[14,'水','N','美好，嘉許，喜慶'],'君':[7,'水','N','君子，品格端正'],'唯':[11,'水','N','獨一無二，專注'],
+  // 擴充字庫
+  '榮':[14,'木','N','繁榮昌盛，榮耀'],
+  '樂':[15,'木','N','快樂，生活愉快'],
+  '樺':[16,'木','N','樺木，清雅挺拔'],
+  '柚':[9,'木','F','柚子，甜美吉祥'],
+  '梧':[11,'木','N','梧桐，高貴有才'],
+  '棟':[12,'木','M','棟樑，可靠的支柱'],
+  '蓉':[16,'木','F','芙蓉，嬌美秀麗'],
+  '蕙':[18,'木','F','蕙質蘭心，聰慧高雅'],
+  '蕾':[19,'木','F','花蕾，含苞待放，有潛力'],
+  '薇':[19,'木','F','薔薇，美麗優雅'],
+  '菁':[14,'木','N','精華，菁英'],
+  '蓓':[16,'木','F','花蕾，新生的希望'],
+  '莎':[13,'木','F','輕柔，自在'],
+  '蔚':[17,'木','N','蔚然成風，有才華'],
+  '茜':[12,'木','F','紅色，熱情溫暖'],
+  '若':[11,'木','F','像是，若水般柔和'],
+  '華':[12,'木','N','光華，才華'],
+  '茹':[12,'木','F','溫柔恬靜'],
+  '葵':[15,'木','N','向陽，向光而生'],
+  '蘭':[23,'木','F','幽蘭，高潔清雅'],
+  '杉':[7,'木','N','挺拔，常綠'],
+  '杏':[7,'木','F','杏花，幸福美好'],
+  '楨':[13,'木','M','棟樑之材，堅實'],
+  '橙':[16,'木','F','橙色，明亮活潑'],
+  '采':[8,'木','F','神采，風采'],
+  '禾':[5,'木','N','五穀豐登，踏實'],
+  '燁':[16,'火','M','火光燦爛，光明'],
+  '炳':[9,'火','M','光明顯著，文采'],
+  '煌':[13,'火','M','輝煌，光明耀眼'],
+  '煊':[13,'火','N','溫暖明亮'],
+  '昭':[9,'火','N','明亮，昭示光明'],
+  '昇':[8,'火','M','上升，步步高升'],
+  '晉':[10,'火','M','晉升，進步'],
+  '晟':[11,'火','M','光明旺盛'],
+  '晞':[11,'火','N','破曉，天光初現'],
+  '景':[12,'火','N','景象美好，景仰'],
+  '智':[12,'火','N','智慧，聰明機靈'],
+  '暄':[13,'火','N','溫暖，和煦'],
+  '暖':[13,'火','F','溫暖貼心'],
+  '曜':[18,'火','N','日月星辰的光芒'],
+  '星':[9,'火','N','星光，閃耀'],
+  '晗':[11,'火','N','天將明，充滿希望'],
+  '彥':[9,'火','M','俊美有才德的人'],
+  '忠':[8,'火','M','忠誠，可靠'],
+  '志':[7,'火','M','志向遠大'],
+  '恆':[10,'火','N','恆心，持之以恆'],
+  '恬':[10,'火','F','恬靜，安適自在'],
+  '惠':[12,'火','N','恩惠，賢慧'],
+  '愛':[13,'火','F','仁愛，被愛的人'],
+  '慈':[14,'火','F','慈愛，有善心'],
+  '憲':[16,'火','M','典範，有法度'],
+  '德':[15,'火','M','品德高尚'],
+  '意':[13,'火','N','心意，有想法'],
+  '慶':[15,'火','N','喜慶，值得慶賀'],
+  '宗':[8,'土','M','宗旨，受人尊崇'],
+  '定':[8,'土','N','安定，穩定'],
+  '守':[6,'土','N','守護，誠信'],
+  '峰':[10,'土','M','山峰，頂尖卓越'],
+  '崧':[11,'土','M','高大的山，崇高'],
+  '巍':[21,'土','M','高大雄偉'],
+  '岱':[8,'土','M','泰山，穩重高貴'],
+  '均':[7,'土','N','公平，均衡'],
+  '圭':[6,'土','N','玉器，品德端正'],
+  '坦':[8,'土','N','坦蕩，平順'],
+  '垣':[9,'土','N','圍牆，守護'],
+  '堉':[11,'土','M','肥沃的土地，福厚'],
+  '增':[15,'土','N','增長，增添福氣'],
+  '墨':[15,'土','N','書卷氣，文采'],
+  '圓':[13,'土','N','圓滿，圓融'],
+  '園':[13,'土','N','花園，美好環境'],
+  '國':[11,'土','M','國家棟樑，胸懷天下'],
+  '固':[8,'土','N','堅固，穩固'],
+  '磐':[15,'土','M','磐石，堅定不移'],
+  '銳':[15,'金','M','銳利，聰敏有衝勁'],
+  '鈴':[13,'金','F','鈴聲清脆，悅耳'],
+  '鍾':[20,'金','M','鍾愛，聚集福氣'],
+  '釗':[10,'金','M','勉勵，有作為'],
+  '銀':[14,'金','N','珍貴，純淨'],
+  '瑋':[14,'金','M','珍奇美玉，才華出眾'],
+  '瑾':[16,'金','F','美玉，品德美好'],
+  '璟':[17,'金','N','玉的光彩，明亮'],
+  '琦':[12,'金','F','奇珍美玉，不平凡'],
+  '珈':[10,'金','F','珠玉飾品，高雅'],
+  '珊':[10,'金','F','珊瑚，珍貴美麗'],
+  '瑄':[14,'金','F','美玉，溫潤高貴'],
+  '玫':[9,'金','F','玫瑰，美麗'],
+  '琴':[13,'金','F','樂器，氣質優雅'],
+  '珍':[10,'金','F','珍貴，被珍惜'],
+  '琇':[12,'金','F','美玉，秀麗'],
+  '珣':[11,'金','N','美玉，溫潤'],
+  '琛':[13,'金','N','珍寶，貴重'],
+  '欽':[12,'金','M','恭敬，受人敬重'],
+  '沐':[8,'水','N','沐浴恩澤，福氣'],
+  '沅':[8,'水','N','沅水，清澈'],
+  '沂':[8,'水','M','沂水，河流，志向高遠'],
+  '洛':[10,'水','N','洛水，文采'],
+  '洵':[10,'水','M','誠信，確實'],
+  '浚':[11,'水','M','深遠，疏通'],
+  '淇':[12,'水','F','淇水，清澈美好'],
+  '淮':[12,'水','M','淮水，穩健'],
+  '渝':[13,'水','N','平安喜悅'],
+  '溫':[14,'水','N','溫和，溫暖'],
+  '源':[14,'水','M','源頭，源遠流長'],
+  '漪':[15,'水','F','水波，柔美'],
+  '濤':[18,'水','M','波濤，氣勢開闊'],
+  '如':[6,'水','F','如意，美好如願'],
+  '謙':[17,'水','M','謙虛，有涵養'],
+  '謹':[18,'水','M','謹慎，穩重'],
+  '誼':[15,'水','N','情誼，人緣好'],
+  '品':[9,'水','N','品格，品味'],
+  '啟':[11,'水','M','開啟，啟發'],
+  '和':[8,'水','N','和諧，和氣'],
+  '善':[12,'水','N','善良，良善'],
+  '吉':[6,'水','N','吉祥，平安'],
+  '雲':[12,'水','N','自在，高遠'],
+  '霜':[17,'水','F','純淨，堅毅'],
+  '泉':[9,'水','N','源源不絕，清澈']
 };
 
 var SURNAME_STROKES = {
@@ -2150,9 +2269,46 @@ function runNaming(){
   h+='<p>名字裡的字，五行以「'+core.yong+'」為主、「'+core.xi+'」為輔，避開「'+core.ji+'」字，會讓這個孩子的命盤更平衡。</p>';
   h+='</div></div>';
 
+  NAMEST.exclude=[]; NAMEST.batch=0;
+  NAMEST.all=buildPicks(NAMEST.exclude);
+  var picksHtml='<div class="sec"><div class="sec-head"><div class="sec-icon">名</div>推薦名字（'+sn+'＋名）</div><div class="sec-body"><div id="n-picks">'+renderPicks()+'</div></div></div>';
+  var mine=(document.getElementById('n-mine').value||'').trim();
+  var ck='<div class="sec"><div class="sec-head"><div class="sec-icon">驗</div>檢查你想好的名字</div><div class="sec-body">';
+  ck+='<p style="font-size:.82rem;color:var(--mist);margin-bottom:8px">可以一次輸入多個名字（用逗號或換行分開），例如「宥辰，宸宇」。會看五行是否合用神、五格數理與三才，並由高到低排序。</p>';
+  ck+='<textarea id="n-check" rows="2" placeholder="例如：宥辰，宸宇" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem;font-family:inherit">'+mine.replace(/</g,'&lt;')+'</textarea>';
+  ck+='<button class="btn" style="margin-top:8px" onclick="checkName()">檢查這些名字</button>';
+  ck+='<div id="n-check-out" style="margin-top:12px"></div>';
+  ck+='</div></div>';
+  if(mine) h+=ck;
+  h+=picksHtml;
+  if(!mine) h+=ck;
+  h+='<div class="sec"><div class="sec-head"><div class="sec-icon">時</div>不同時辰的差異'+(hourIdx<0?'（時辰未定時請參考）':'')+'</div><div class="sec-body">';
+  var ZH=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  var rows='', ysx={};
+  for(var hi=0;hi<12;hi++){
+    var cc=nameCore(gender,y,m,d,hi);
+    ysx[cc.yong+cc.xi]=1;
+    rows+='<tr style="border-bottom:1px solid var(--border)"><td style="padding:5px">'+ZH[hi]+'時</td><td style="padding:5px">'+cc.hp.gan+cc.hp.zhi+'</td><td style="padding:5px">'+(cc.strong?'偏強':'偏弱')+'</td><td style="padding:5px">'+wxTag(cc.yong)+'</td><td style="padding:5px">'+wxTag(cc.xi)+'</td></tr>';
+  }
+  if(Object.keys(ysx).length===1) h+='<p>不論哪個時辰出生，用神與喜神都相同，可以放心用上面的結果。</p>';
+  else h+='<p>不同時辰的用神會不一樣，下表可以看出差別。預產期還沒到的話，等孩子出生後再用實際時辰重新確認會更準。</p>';
+  h+='<table style="width:100%;border-collapse:collapse;font-size:.82rem;text-align:center;margin-top:8px"><tr style="color:var(--mist)"><th>時辰</th><th>時柱</th><th>日主</th><th>用神</th><th>喜神</th></tr>'+rows+'</table>';
+  h+='</div></div>';
+
+  document.getElementById('n-result').innerHTML=h;
+  if(mine) checkName();
+  document.getElementById('n-result-wrap').style.display='';
+  document.getElementById('n-result-wrap').scrollIntoView({behavior:'smooth'});
+}
+
+
+// 產生推薦清單（依分數排序，同字、同筆畫組合有出現次數上限以增加多樣性）
+function buildPicks(exclude){
+  var core=NAMEST.core, gender=NAMEST.gender, sStroke=NAMEST.sStroke;
   var pool=[];
   Object.keys(NAME_DB).forEach(function(c){
     var e=NAME_DB[c];
+    if(exclude.indexOf(c)>=0) return;
     if(e[1]!==core.yong && e[1]!==core.xi) return;
     if(gender==='male' && e[2]==='F') return;
     if(gender==='female' && e[2]==='M') return;
@@ -2168,96 +2324,105 @@ function runNaming(){
   }); });
   cands.sort(function(p,q){ return q.sc-p.sc; });
   var picked=[], used={}, strokeUsed={};
-  for(var i=0;i<cands.length && picked.length<14;i++){
+  for(var i=0;i<cands.length && picked.length<112;i++){
     var c=cands[i];
-    if((used[c.a]||0)>=2 || (used[c.b]||0)>=2) continue;
+    if((used[c.a]||0)>=4 || (used[c.b]||0)>=4) continue;
     if(luckOf(c.w.ren)==='凶' || luckOf(c.w.di)==='凶' || luckOf(c.w.zong)==='凶') continue;
     var sk=NAME_DB[c.a][0]+'-'+NAME_DB[c.b][0];
-    if((strokeUsed[sk]||0)>=2) continue;
+    if((strokeUsed[sk]||0)>=3) continue;
     strokeUsed[sk]=(strokeUsed[sk]||0)+1;
     picked.push(c); used[c.a]=(used[c.a]||0)+1; used[c.b]=(used[c.b]||0)+1;
   }
-  h+='<div class="sec"><div class="sec-head"><div class="sec-icon">名</div>推薦名字（'+sn+'＋名）</div><div class="sec-body">';
-  if(!picked.length){
-    h+='<p>字庫中找不到同時符合五行與五格的組合，建議放寬條件，或用下方「檢查名字」自行試字。</p>';
+  return picked;
+}
+
+function renderPicks(){
+  var S=NAMEST, sn=S.sn, all=S.all, per=14, total=all.length;
+  var pages=Math.max(1,Math.ceil(total/per));
+  S.batch=((S.batch%pages)+pages)%pages;
+  var cur=all.slice(S.batch*per,S.batch*per+per);
+  var h='';
+  if(!total){
+    h+='<p>字庫中找不到符合條件的組合，可以清除「不想用的字」，或用上方「檢查名字」自行試字。</p>';
   } else {
-    h+='<p style="font-size:.8rem;color:var(--mist);margin-bottom:8px">已依「用神五行＋人格／地格／總格皆非凶＋三才配置」排序。性別：'+(gender==='male'?'男':'女')+'。</p>';
-    picked.forEach(function(c,idx){
+    h+='<p style="font-size:.8rem;color:var(--mist);margin-bottom:8px">已依「用神五行＋人格／地格／總格皆非凶＋三才配置」排序。性別：'+(S.gender==='male'?'男':'女')+'。第 '+(S.batch+1)+' / '+pages+' 批，共 '+total+' 組。</p>';
+    cur.forEach(function(c,idx){
       var A=NAME_DB[c.a], B=NAME_DB[c.b];
       h+='<div style="border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:8px">';
-      h+='<div style="font-family:\'Noto Serif TC\',serif;font-size:1.2rem;font-weight:700;letter-spacing:.1em">'+(idx+1)+'. '+sn+c.name+'　<span style="font-size:.8rem;font-weight:400;color:var(--mist)">'+wxTag(A[1])+wxTag(B[1])+'（'+A[0]+'畫＋'+B[0]+'畫）</span></div>';
+      h+='<div style="font-family:\'Noto Serif TC\',serif;font-size:1.2rem;font-weight:700;letter-spacing:.1em">'+(S.batch*per+idx+1)+'. '+sn+c.name+'　<span style="font-size:.8rem;font-weight:400;color:var(--mist)">'+wxTag(A[1])+wxTag(B[1])+'（'+A[0]+'畫＋'+B[0]+'畫）</span></div>';
       h+='<div style="font-size:.82rem;margin-top:4px">'+c.a+'：'+A[3]+'<br>'+c.b+'：'+B[3]+'</div>';
       h+='<div style="font-size:.78rem;color:var(--mist);margin-top:4px">'+wugeText(c.w)+'</div>';
       h+='</div>';
     });
+    h+='<button class="btn" onclick="nextPicks()">🔄 都不喜歡？換一批推薦</button>';
   }
+  h+='<div style="margin-top:12px"><label style="font-size:.82rem;color:var(--mist)">有不想用的字（例如不喜歡「宸」），輸入後會從推薦中排除：</label>';
+  h+='<div style="display:flex;gap:8px;margin-top:6px"><input type="text" id="n-excl" value="'+S.exclude.join('')+'" placeholder="例如：宸鈺" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem"><button class="btn" style="width:auto;padding:10px 16px" onclick="applyExclude()">重新推薦</button></div></div>';
   h+='<div class="tip">天格由姓氏決定，無法調整，僅供參考；名字主要看人格、地格、總格。電腦只能篩選五行和筆畫。最後請你們大聲唸幾次，確認沒有不雅諧音、字義和長輩喜好，並到戶政事務所確認字可以登記。</div>';
-  h+='</div></div>';
-
-  h+='<div class="sec"><div class="sec-head"><div class="sec-icon">驗</div>檢查你想好的名字</div><div class="sec-body">';
-  h+='<p style="font-size:.82rem;color:var(--mist);margin-bottom:8px">輸入「名」的部分（1～2個字），會幫你看五行是否合用神、五格數理與三才。</p>';
-  h+='<div style="display:flex;gap:8px"><input type="text" id="n-check" maxlength="2" placeholder="例如：宥宸" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:1rem"><button class="btn" style="width:auto;padding:10px 18px" onclick="checkName()">檢查</button></div>';
-  h+='<div id="n-check-out" style="margin-top:12px"></div>';
-  h+='</div></div>';
-
-  h+='<div class="sec"><div class="sec-head"><div class="sec-icon">時</div>不同時辰的差異'+(hourIdx<0?'（時辰未定時請參考）':'')+'</div><div class="sec-body">';
-  var ZH=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-  var rows='', ysx={};
-  for(var hi=0;hi<12;hi++){
-    var cc=nameCore(gender,y,m,d,hi);
-    ysx[cc.yong+cc.xi]=1;
-    rows+='<tr style="border-bottom:1px solid var(--border)"><td style="padding:5px">'+ZH[hi]+'時</td><td style="padding:5px">'+cc.hp.gan+cc.hp.zhi+'</td><td style="padding:5px">'+(cc.strong?'偏強':'偏弱')+'</td><td style="padding:5px">'+wxTag(cc.yong)+'</td><td style="padding:5px">'+wxTag(cc.xi)+'</td></tr>';
-  }
-  if(Object.keys(ysx).length===1) h+='<p>不論哪個時辰出生，用神與喜神都相同，可以放心用上面的結果。</p>';
-  else h+='<p>不同時辰的用神會不一樣，下表可以看出差別。預產期還沒到的話，等孩子出生後再用實際時辰重新確認會更準。</p>';
-  h+='<table style="width:100%;border-collapse:collapse;font-size:.82rem;text-align:center;margin-top:8px"><tr style="color:var(--mist)"><th>時辰</th><th>時柱</th><th>日主</th><th>用神</th><th>喜神</th></tr>'+rows+'</table>';
-  h+='</div></div>';
-
-  document.getElementById('n-result').innerHTML=h;
-  document.getElementById('n-result-wrap').style.display='';
-  document.getElementById('n-result-wrap').scrollIntoView({behavior:'smooth'});
+  return h;
+}
+function nextPicks(){ NAMEST.batch++; document.getElementById('n-picks').innerHTML=renderPicks(); }
+function applyExclude(){
+  var v=(document.getElementById('n-excl').value||'').split('').filter(function(c){return c.trim();});
+  NAMEST.exclude=v; NAMEST.batch=0; NAMEST.all=buildPicks(v);
+  document.getElementById('n-picks').innerHTML=renderPicks();
 }
 
 function checkName(){
   if(!NAMEST){ alert('請先起盤'); return; }
-  var given=(document.getElementById('n-check').value||'').trim();
-  var chars=given.split('');
-  if(chars.length<1||chars.length>2){ alert('請輸入 1～2 個字的名字'); return; }
-  var unknown=[];
-  chars.forEach(function(c){
-    if(NAME_DB[c]) return;
-    var sEl=document.getElementById('nc-str-'+c), xEl=document.getElementById('nc-wx-'+c);
-    if(sEl && xEl && parseInt(sEl.value) && xEl.value){ NAMEST.manual[c]=[parseInt(sEl.value),xEl.value,'N','（自行輸入）']; }
-    if(!NAMEST.manual[c]) unknown.push(c);
-  });
+  var raw=(document.getElementById('n-check').value||'').trim();
+  if(!raw){ alert('請輸入想檢查的名字'); return; }
+  var list=raw.split(/[,，、;；\s]+/).filter(function(x){return x;});
+  if(list.length>12) list=list.slice(0,12);
   var out=document.getElementById('n-check-out');
-  if(unknown.length){
-    var h0='<p style="font-size:.85rem">字庫中沒有「'+unknown.join('、')+'」，請填入康熙字典筆畫與五行後再按一次「檢查」：</p>';
-    unknown.forEach(function(c){
-      h0+='<div style="margin:6px 0">'+c+'：<input type="number" id="nc-str-'+c+'" placeholder="筆畫" style="width:70px;padding:6px"> <select id="nc-wx-'+c+'" style="padding:6px"><option value="">五行</option><option>木</option><option>火</option><option>土</option><option>金</option><option>水</option></select></div>';
+  var sn=NAMEST.sn, core=NAMEST.core;
+  var items=[], unknown=[], errs=[];
+  list.forEach(function(nm){
+    var given=(nm.indexOf(sn)===0 && nm.length>1)?nm.slice(1):nm;
+    var chars=given.split('');
+    if(chars.length<1||chars.length>2){ errs.push(nm); return; }
+    chars.forEach(function(c){
+      if(NAME_DB[c]||NAMEST.manual[c]) return;
+      var sEl=document.getElementById('nc-str-'+c), xEl=document.getElementById('nc-wx-'+c);
+      if(sEl && xEl && parseInt(sEl.value) && xEl.value){ NAMEST.manual[c]=[parseInt(sEl.value),xEl.value,'N','（自行輸入）']; }
+      else if(unknown.indexOf(c)<0) unknown.push(c);
     });
-    out.innerHTML=h0; return;
-  }
-  var infos=chars.map(function(c){ return NAME_DB[c]||NAMEST.manual[c]; });
-  var w=wuge(NAMEST.sStroke, infos.map(function(x){return x[0];}));
-  var core=NAMEST.core, wl=infos.map(function(x){return x[1];});
-  var h='<div style="border:1px solid var(--border);border-radius:6px;padding:12px">';
-  h+='<div style="font-family:\'Noto Serif TC\',serif;font-size:1.2rem;font-weight:700;letter-spacing:.1em">'+NAMEST.sn+given+'</div>';
-  h+='<p style="margin-top:6px;font-size:.85rem">';
-  chars.forEach(function(c,i){
-    var x=infos[i], tag=(x[1]===core.yong)?'（用神，很好）':(x[1]===core.xi)?'（喜神，不錯）':(x[1]===core.ji)?'（忌神，建議避開）':'（中性）';
-    h+=c+'：'+x[0]+'畫，'+wxTag(x[1])+tag+'　'+x[3]+'<br>';
+    items.push({given:given, chars:chars});
   });
-  h+='</p>';
-  h+='<p style="margin-top:6px;font-size:.82rem;color:var(--mist)">'+wugeText(w)+'</p>';
-  var sc=scoreName(w,wl,core);
-  var verdict=sc>=9?'整體很理想':(sc>=5?'整體不錯':(sc>=1?'還可以，有些地方可再調整':'建議再換字試試'));
-  var notes=[];
-  if(wl.indexOf(core.yong)<0) notes.push('名字裡沒有用神「'+core.yong+'」的字，補運效果較弱');
-  if(wl.indexOf(core.ji)>=0) notes.push('名字含有忌神「'+core.ji+'」的字');
-  ['ren','di','zong'].forEach(function(k){ if(luckOf(w[k])==='凶'){ notes.push({ren:'人格',di:'地格',zong:'總格'}[k]+'數理為凶'); } });
-  h+='<p style="margin-top:8px"><strong>'+verdict+'</strong>'+(notes.length?'。要留意：'+notes.join('；'):'。')+'</p>';
-  h+='</div>';
+  var h='';
+  if(errs.length) h+='<p style="font-size:.82rem;color:#c0392b">以下無法判斷（名字需為 1～2 個字，可不含姓氏）：'+errs.join('、')+'</p>';
+  if(unknown.length){
+    h+='<div style="background:var(--gold-pale);border-radius:6px;padding:10px;margin-bottom:10px"><p style="font-size:.85rem">字庫中沒有「'+unknown.join('、')+'」，請填入康熙字典筆畫與五行後，再按一次「檢查這些名字」：</p>';
+    unknown.forEach(function(c){
+      h+='<div style="margin:6px 0">'+c+'：<input type="number" id="nc-str-'+c+'" placeholder="筆畫" style="width:70px;padding:6px"> <select id="nc-wx-'+c+'" style="padding:6px"><option value="">五行</option><option>木</option><option>火</option><option>土</option><option>金</option><option>水</option></select></div>';
+    });
+    h+='</div>';
+  }
+  var ready=[];
+  items.forEach(function(it){
+    var infos=it.chars.map(function(c){ return NAME_DB[c]||NAMEST.manual[c]; });
+    if(infos.some(function(x){return !x;})) return;
+    var w=wuge(NAMEST.sStroke, infos.map(function(x){return x[0];}));
+    var wl=infos.map(function(x){return x[1];});
+    ready.push({given:it.given, chars:it.chars, infos:infos, w:w, wl:wl, sc:scoreName(w,wl,core)});
+  });
+  ready.sort(function(a,b){ return b.sc-a.sc; });
+  ready.forEach(function(r,idx){
+    var verdict=r.sc>=9?'整體很理想':(r.sc>=5?'整體不錯':(r.sc>=1?'還可以，有些地方可再調整':'建議再換字試試'));
+    var notes=[];
+    if(r.wl.indexOf(core.yong)<0) notes.push('名字裡沒有用神「'+core.yong+'」的字，補運效果較弱');
+    if(r.wl.indexOf(core.ji)>=0) notes.push('名字含有忌神「'+core.ji+'」的字');
+    ['ren','di','zong'].forEach(function(k){ if(luckOf(r.w[k])==='凶'){ notes.push({ren:'人格',di:'地格',zong:'總格'}[k]+'數理為凶'); } });
+    h+='<div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px">';
+    h+='<div style="font-family:\'Noto Serif TC\',serif;font-size:1.2rem;font-weight:700;letter-spacing:.1em">'+(ready.length>1?(idx+1)+'. ':'')+sn+r.given+'</div>';
+    h+='<p style="margin-top:6px;font-size:.85rem">';
+    r.chars.forEach(function(c,i){
+      var x=r.infos[i], tag=(x[1]===core.yong)?'（用神，很好）':(x[1]===core.xi)?'（喜神，不錯）':(x[1]===core.ji)?'（忌神，建議避開）':'（中性）';
+      h+=c+'：'+x[0]+'畫，'+wxTag(x[1])+tag+'　'+x[3]+'<br>';
+    });
+    h+='</p><p style="margin-top:6px;font-size:.82rem;color:var(--mist)">'+wugeText(r.w)+'</p>';
+    h+='<p style="margin-top:8px"><strong>'+verdict+'</strong>'+(notes.length?'。要留意：'+notes.join('；'):'。')+'</p></div>';
+  });
   out.innerHTML=h;
 }
 
